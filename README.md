@@ -2,6 +2,8 @@
 
 This library gives you a set of fakes that allow you fake Firebase Firestore. It is similar to [fake_cloud_firestore](https://pub.dev/packages/fake_cloud_firestore) in that you can fake Firestore. However, this library gives you more control. You can add code to capture the events where documents are added to a collection, and you can capture the events where there is a fetch request. You can return whatever you want. Here is a typical example.
 
+Please understand that this is only an alpha release and only the bare minimum was implemented. Feel free to add PRs to implement more functionality.
+
 ```dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_fakes/collection_reference_fake.dart';
