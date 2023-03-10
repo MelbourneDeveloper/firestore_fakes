@@ -7,6 +7,7 @@ class CollectionReferenceFake
   CollectionReferenceFake({
     this.addDocumentReference,
     this.documentReference,
+    this.getWhere,
   });
 
   final Future<DocumentReference<Map<String, dynamic>>> Function(
@@ -15,6 +16,21 @@ class CollectionReferenceFake
 
   final DocumentReference<Map<String, dynamic>> Function(String path)?
       documentReference;
+
+  final Query<Map<String, dynamic>> Function(
+    Object field, {
+    Object? isEqualTo,
+    Object? isNotEqualTo,
+    Object? isLessThan,
+    Object? isLessThanOrEqualTo,
+    Object? isGreaterThan,
+    Object? isGreaterThanOrEqualTo,
+    Object? arrayContains,
+    Iterable<Object?>? arrayContainsAny,
+    Iterable<Object?>? whereIn,
+    Iterable<Object?>? whereNotIn,
+    bool? isNull,
+  })? getWhere;
 
   @override
   Future<DocumentReference<Map<String, dynamic>>> add(
@@ -165,10 +181,26 @@ class CollectionReferenceFake
     Iterable<Object?>? whereIn,
     Iterable<Object?>? whereNotIn,
     bool? isNull,
-  }) {
-    // TODO: implement where
-    throw UnimplementedError();
-  }
+  }) =>
+      getWhere == null
+          ? throw UnimplementedError(
+              'You must supply getWhere to the constructor of'
+              ' CollectionReferenceFake',
+            )
+          : getWhere!(
+              field,
+              isEqualTo: isEqualTo,
+              isNotEqualTo: isNotEqualTo,
+              isLessThan: isLessThan,
+              isLessThanOrEqualTo: isLessThanOrEqualTo,
+              isGreaterThan: isGreaterThan,
+              isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+              arrayContains: arrayContains,
+              arrayContainsAny: arrayContainsAny,
+              whereIn: whereIn,
+              whereNotIn: whereNotIn,
+              isNull: isNull,
+            );
 
   @override
   @override
