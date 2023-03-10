@@ -1,9 +1,18 @@
+// ignore_for_file: subtype_of_sealed_class
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
-  DocumentReferenceFake(this._get, this._id);
+  DocumentReferenceFake(
+    this._id, {
+    required this.getSnapshot,
+    this.updateData,
+    this.setData,
+  });
 
-  final Future<DocumentSnapshot<Map<String, dynamic>>> Function() _get;
+  final Future<DocumentSnapshot<Map<String, dynamic>>> Function() getSnapshot;
+  final Future<void> Function(Map<Object, Object?>)? updateData;
+  final Future<void> Function(Map<String, dynamic> data)? setData;
   final String _id;
 
   @override
@@ -24,7 +33,7 @@ class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
 
   @override
   Future<DocumentSnapshot<Map<String, dynamic>>> get([GetOptions? options]) =>
-      _get();
+      getSnapshot();
 
   @override
   // TODO: implement id
@@ -40,24 +49,26 @@ class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
   String get path => throw UnimplementedError();
 
   @override
-  Future<void> set(Map<String, dynamic> data, [SetOptions? options]) {
-    // TODO: implement set
-    throw UnimplementedError();
-  }
+  Future<void> set(Map<String, dynamic> data, [SetOptions? options]) =>
+      setData == null
+          ? throw UnimplementedError(
+              'You must supply setData to the constructor of '
+              'DocumentReferenceFake')
+          : setData!(data);
 
   @override
-  Stream<DocumentSnapshot<Map<String, dynamic>>> snapshots(
-      {bool includeMetadataChanges = false}) {
+  Stream<DocumentSnapshot<Map<String, dynamic>>> snapshots({
+    bool includeMetadataChanges = false,
+  }) {
     // TODO: implement snapshots
     throw UnimplementedError();
   }
 
   @override
-  Future<void> update(Map<Object, Object?> data) {
-    // TODO: implement update
-    throw UnimplementedError();
-  }
+  Future<void> update(Map<Object, Object?> data) =>
+      updateData == null ? throw UnimplementedError() : updateData!(data);
 
+  @override
   DocumentReference<R> withConverter<R>({
     required FromFirestore<R> fromFirestore,
     required ToFirestore<R> toFirestore,

@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class DocumentSnaphotFake implements DocumentSnapshot<Map<String, dynamic>> {
-  final Map<String, dynamic> _data;
 
   DocumentSnaphotFake(this._data);
+  final Map<String, dynamic> _data;
 
   @override
-  operator [](Object field) {
+  dynamic operator [](Object field) {
     // TODO: implement []
     throw UnimplementedError();
   }
@@ -19,7 +20,7 @@ class DocumentSnaphotFake implements DocumentSnapshot<Map<String, dynamic>> {
   bool get exists => throw UnimplementedError();
 
   @override
-  get(Object field) {
+  dynamic get(Object field) {
     // TODO: implement get
     throw UnimplementedError();
   }

@@ -1,18 +1,43 @@
 // TODO: Put public facing types in this file.
 
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file:  always_put_required_named_parameters_first, strict_raw_type
 
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firestore_fakes/collection_reference_fake.dart';
+import 'package:firestore_fakes/document_reference_fake.dart';
+import 'package:firestore_fakes/document_snapshot_fake.dart';
 import 'package:firestore_fakes/firebase_app_fake.dart';
 import 'package:firestore_fakes/settings_fake.dart';
 
 /// Checks if you are awesome. Spoiler: you are.
 class FirebaseFirestoreFake implements FirebaseFirestore {
   FirebaseFirestoreFake(this._collection);
+
+  factory FirebaseFirestoreFake.fromSingleDocumentData(
+    Map<String, dynamic> documentSnapshotData,
+    String documentId,
+  ) {
+    final documentSnaphotFake = DocumentSnaphotFake(documentSnapshotData);
+    final documentReferenceFake = DocumentReferenceFake(
+      documentId,
+      getSnapshot: () async => documentSnaphotFake,
+      updateData: (data) async {
+        for (final entry in data.entries) {
+          documentSnapshotData[entry.key as String] = entry.value;
+        }
+      },
+    );
+
+    return FirebaseFirestoreFake(
+      (name) => CollectionReferenceFake(
+        documentReference: (path) => documentReferenceFake,
+      ),
+    );
+  }
 
   final CollectionReference<Map<String, dynamic>> Function(String name)
       _collection;
@@ -76,8 +101,10 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
   }
 
   @override
-  Future<QuerySnapshot<Map<String, dynamic>>> namedQueryGet(String name,
-      {GetOptions options = const GetOptions()}) {
+  Future<QuerySnapshot<Map<String, dynamic>>> namedQueryGet(
+    String name, {
+    GetOptions options = const GetOptions(),
+  }) {
     // TODO: implement namedQueryGet
     throw UnimplementedError();
   }
@@ -110,17 +137,21 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
   }
 
   @override
-  Future<QuerySnapshot<T>> namedQueryWithConverterGet<T>(String name,
-      {GetOptions options = const GetOptions(),
-      required FromFirestore<T> fromFirestore,
-      required ToFirestore<T> toFirestore}) {
+  Future<QuerySnapshot<T>> namedQueryWithConverterGet<T>(
+    String name, {
+    GetOptions options = const GetOptions(),
+    required FromFirestore<T> fromFirestore,
+    required ToFirestore<T> toFirestore,
+  }) {
     // TODO: implement namedQueryWithConverterGet
     throw UnimplementedError();
   }
 
   @override
-  Future<void> setIndexConfiguration(
-      {required List<Index> indexes, List<FieldOverrides>? fieldOverrides}) {
+  Future<void> setIndexConfiguration({
+    required List<Index> indexes,
+    List<FieldOverrides>? fieldOverrides,
+  }) {
     // TODO: implement setIndexConfiguration
     throw UnimplementedError();
   }
@@ -132,8 +163,11 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
   }
 
   @override
-  Future<T> runTransaction<T>(TransactionHandler<T> transactionHandler,
-      {Duration timeout = const Duration(seconds: 30), int maxAttempts = 5}) {
+  Future<T> runTransaction<T>(
+    TransactionHandler<T> transactionHandler, {
+    Duration timeout = const Duration(seconds: 30),
+    int maxAttempts = 5,
+  }) {
     // TODO: implement runTransaction
     throw UnimplementedError();
   }

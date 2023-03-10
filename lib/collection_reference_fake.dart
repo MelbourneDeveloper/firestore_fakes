@@ -1,22 +1,31 @@
+// ignore_for_file: subtype_of_sealed_class
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CollectionReferenceFake
     implements CollectionReference<Map<String, dynamic>> {
   CollectionReferenceFake({
-    required this.addDocumentReference,
-    required this.documentReference,
+    this.addDocumentReference,
+    this.documentReference,
   });
 
   final Future<DocumentReference<Map<String, dynamic>>> Function(
-      Map<String, dynamic> data) addDocumentReference;
+    Map<String, dynamic> data,
+  )? addDocumentReference;
 
-  final DocumentReference<Map<String, dynamic>> Function(String path)
+  final DocumentReference<Map<String, dynamic>> Function(String path)?
       documentReference;
 
   @override
   Future<DocumentReference<Map<String, dynamic>>> add(
-          Map<String, dynamic> data) =>
-      addDocumentReference(data);
+    Map<String, dynamic> data,
+  ) =>
+      addDocumentReference == null
+          ? throw UnimplementedError(
+              'You must supply addDocumentReference to the constructor of'
+              ' CollectionReferenceFake',
+            )
+          : addDocumentReference!(data);
 
   @override
   AggregateQuery count() {
@@ -26,7 +35,12 @@ class CollectionReferenceFake
 
   @override
   DocumentReference<Map<String, dynamic>> doc([String? path]) =>
-      documentReference(path!);
+      documentReference == null
+          ? throw UnimplementedError(
+              'You must supply documentReference to the constructor of '
+              'CollectionReferenceFake',
+            )
+          : documentReference!(path!);
 
   @override
   Query<Map<String, dynamic>> endAt(Iterable<Object?> values) {
@@ -36,7 +50,8 @@ class CollectionReferenceFake
 
   @override
   Query<Map<String, dynamic>> endAtDocument(
-      DocumentSnapshot<Object?> documentSnapshot) {
+    DocumentSnapshot<Object?> documentSnapshot,
+  ) {
     // TODO: implement endAtDocument
     throw UnimplementedError();
   }
@@ -49,7 +64,8 @@ class CollectionReferenceFake
 
   @override
   Query<Map<String, dynamic>> endBeforeDocument(
-      DocumentSnapshot<Object?> documentSnapshot) {
+    DocumentSnapshot<Object?> documentSnapshot,
+  ) {
     // TODO: implement endBeforeDocument
     throw UnimplementedError();
   }
@@ -100,8 +116,9 @@ class CollectionReferenceFake
   String get path => throw UnimplementedError();
 
   @override
-  Stream<QuerySnapshot<Map<String, dynamic>>> snapshots(
-      {bool includeMetadataChanges = false}) {
+  Stream<QuerySnapshot<Map<String, dynamic>>> snapshots({
+    bool includeMetadataChanges = false,
+  }) {
     // TODO: implement snapshots
     throw UnimplementedError();
   }
@@ -114,7 +131,8 @@ class CollectionReferenceFake
 
   @override
   Query<Map<String, dynamic>> startAfterDocument(
-      DocumentSnapshot<Object?> documentSnapshot) {
+    DocumentSnapshot<Object?> documentSnapshot,
+  ) {
     // TODO: implement startAfterDocument
     throw UnimplementedError();
   }
@@ -127,24 +145,27 @@ class CollectionReferenceFake
 
   @override
   Query<Map<String, dynamic>> startAtDocument(
-      DocumentSnapshot<Object?> documentSnapshot) {
+    DocumentSnapshot<Object?> documentSnapshot,
+  ) {
     // TODO: implement startAtDocument
     throw UnimplementedError();
   }
 
   @override
-  Query<Map<String, dynamic>> where(Object field,
-      {Object? isEqualTo,
-      Object? isNotEqualTo,
-      Object? isLessThan,
-      Object? isLessThanOrEqualTo,
-      Object? isGreaterThan,
-      Object? isGreaterThanOrEqualTo,
-      Object? arrayContains,
-      Iterable<Object?>? arrayContainsAny,
-      Iterable<Object?>? whereIn,
-      Iterable<Object?>? whereNotIn,
-      bool? isNull}) {
+  Query<Map<String, dynamic>> where(
+    Object field, {
+    Object? isEqualTo,
+    Object? isNotEqualTo,
+    Object? isLessThan,
+    Object? isLessThanOrEqualTo,
+    Object? isGreaterThan,
+    Object? isGreaterThanOrEqualTo,
+    Object? arrayContains,
+    Iterable<Object?>? arrayContainsAny,
+    Iterable<Object?>? whereIn,
+    Iterable<Object?>? whereNotIn,
+    bool? isNull,
+  }) {
     // TODO: implement where
     throw UnimplementedError();
   }

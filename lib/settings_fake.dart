@@ -15,7 +15,7 @@ class SettingsFake implements Settings {
       String? host,
       bool? sslEnabled,
       int? cacheSizeBytes,
-      bool? ignoreUndefinedProperties}) {
+      bool? ignoreUndefinedProperties,}) {
     // TODO: implement copyWith
     throw UnimplementedError();
   }
