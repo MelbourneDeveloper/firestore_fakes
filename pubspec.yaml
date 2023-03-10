@@ -1,0 +1,22 @@
+name: firestore_fakes
+description: A Firestore fake library that gives you control over the data
+version: 0.0.1-alpha
+homepage:
+
+environment:
+  sdk: '>=2.19.4 <3.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  cloud_firestore: ^4.4.4
+  flutter:
+    sdk: flutter
+  uuid: ^3.0.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+
+flutter:
