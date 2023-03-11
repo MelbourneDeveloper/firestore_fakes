@@ -2,6 +2,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:firestore_fakes/firestore_fakes.dart';
+
 class CollectionReferenceFake
     implements CollectionReference<Map<String, dynamic>> {
   CollectionReferenceFake(
@@ -9,7 +11,8 @@ class CollectionReferenceFake
     this.addFake,
     this.docFake,
     this.whereFake,
-  });
+    FirebaseFirestore? firestore,
+  }) : _firestore = firestore ?? FirebaseFirestoreFake();
 
   final Future<DocumentReference<Map<String, dynamic>>> Function(
     Map<String, dynamic> data,
@@ -33,6 +36,8 @@ class CollectionReferenceFake
   })? whereFake;
 
   final String _path;
+
+  final FirebaseFirestore _firestore;
 
   @override
   Future<DocumentReference<Map<String, dynamic>>> add(
@@ -88,8 +93,7 @@ class CollectionReferenceFake
   }
 
   @override
-  // TODO: implement firestore
-  FirebaseFirestore get firestore => throw UnimplementedError();
+  FirebaseFirestore get firestore => _firestore;
 
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> get([GetOptions? options]) {
