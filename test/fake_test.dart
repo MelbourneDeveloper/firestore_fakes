@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firestore_fakes/collection_reference_fake.dart';
-import 'package:firestore_fakes/document_reference_fake.dart';
-import 'package:firestore_fakes/document_snapshot_fake.dart';
-import 'package:firestore_fakes/firebase_firestore_fake.dart';
+import 'package:firestore_fakes/firestore_fakes.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uuid/uuid.dart';
 
