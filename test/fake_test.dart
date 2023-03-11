@@ -79,6 +79,8 @@ void main() {
     expect(firestore.collection('users').path, 'users');
   });
 
+  ///Test that we can query a collection with where, and then listen for 
+  ///streamed results
   test('Test Query Snapshot Streams', () async {
     final queriesStreamController =
         StreamController<QuerySnapshot<Map<String, dynamic>>>.broadcast();
@@ -125,6 +127,38 @@ void main() {
     expect(fetchedData['born'], 2023);
 
     await queriesStreamController.close();
+  });
+
+  ///Tests that we can listen to a document snapshot stream
+  test('Test Document Snapshot Stream', () async {
+    const documentId = '123';
+
+    final documentSnapshotData = <String, dynamic>{'born': 2023};
+
+    final documentsStreamController =
+        StreamController<DocumentSnapshot<Map<String, dynamic>>>.broadcast();
+
+    final firestore = FirebaseFirestoreFake(
+      (n) => CollectionReferenceFake(
+        'users',
+        documentReference: (id) => DocumentReferenceFake(
+          documentId,
+          snapshotsStream: documentsStreamController.stream,
+          getSnapshot: () async => DocumentSnapshotFake(documentSnapshotData),
+        ),
+      ),
+    );
+
+    final fetchedDocumentReference =
+        firestore.collection('users').doc().snapshots().first;
+
+    documentsStreamController.add(DocumentSnapshotFake({'name': 'jim'}));
+
+    final fetchedData = (await fetchedDocumentReference).data()!;
+
+    expect(fetchedData['name'], 'jim');
+
+    await documentsStreamController.close();
   });
 }
 

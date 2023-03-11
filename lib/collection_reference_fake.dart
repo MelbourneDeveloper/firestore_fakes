@@ -15,7 +15,7 @@ class CollectionReferenceFake
     Map<String, dynamic> data,
   )? addDocumentReference;
 
-  final DocumentReference<Map<String, dynamic>> Function(String path)?
+  final DocumentReference<Map<String, dynamic>> Function(String? path)?
       documentReference;
 
   final Query<Map<String, dynamic>> Function(
@@ -59,7 +59,7 @@ class CollectionReferenceFake
               'You must supply documentReference to the constructor of '
               'CollectionReferenceFake',
             )
-          : documentReference!(path!);
+          : documentReference!(path);
 
   @override
   Query<Map<String, dynamic>> endAt(Iterable<Object?> values) {
