@@ -62,7 +62,8 @@ void main() {
               documentSnapshotData[entry.key] = entry.value;
             }
           },
-          getSnapshot: () async => DocumentSnapshotFake(documentSnapshotData),
+          getSnapshot: () async =>
+              DocumentSnapshotFake(documentId, documentSnapshotData),
         ),
       ),
     );
@@ -79,7 +80,7 @@ void main() {
     expect(firestore.collection('users').path, 'users');
   });
 
-  ///Test that we can query a collection with where, and then listen for 
+  ///Test that we can query a collection with where, and then listen for
   ///streamed results
   test('Test Query Snapshot Streams', () async {
     final queriesStreamController =
@@ -133,8 +134,6 @@ void main() {
   test('Test Document Snapshot Stream', () async {
     const documentId = '123';
 
-    final documentSnapshotData = <String, dynamic>{'born': 2023};
-
     final documentsStreamController =
         StreamController<DocumentSnapshot<Map<String, dynamic>>>.broadcast();
 
@@ -144,7 +143,6 @@ void main() {
         documentReference: (id) => DocumentReferenceFake(
           documentId,
           snapshotsStream: documentsStreamController.stream,
-          getSnapshot: () async => DocumentSnapshotFake(documentSnapshotData),
         ),
       ),
     );
@@ -152,9 +150,14 @@ void main() {
     final fetchedDocumentReference =
         firestore.collection('users').doc().snapshots().first;
 
-    documentsStreamController.add(DocumentSnapshotFake({'name': 'jim'}));
+    documentsStreamController
+        .add(DocumentSnapshotFake(documentId, {'name': 'jim'}));
 
-    final fetchedData = (await fetchedDocumentReference).data()!;
+    final documentSnapshot = await fetchedDocumentReference;
+
+    expect(documentSnapshot.id, documentId);
+
+    final fetchedData = documentSnapshot.data()!;
 
     expect(fetchedData['name'], 'jim');
 
@@ -178,7 +181,7 @@ FirebaseFirestoreFake setup() {
         documentId,
         () => DocumentReferenceFake(
           documentId,
-          getSnapshot: () async => DocumentSnapshotFake(data),
+          getSnapshot: () async => DocumentSnapshotFake(documentId, data),
         ),
       );
     },
