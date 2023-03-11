@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-class DocumentSnaphotFake implements DocumentSnapshot<Map<String, dynamic>> {
-
-  DocumentSnaphotFake(this._data);
+class DocumentSnapshotFake implements DocumentSnapshot<Map<String, dynamic>> {
+  DocumentSnapshotFake(this._data);
   final Map<String, dynamic> _data;
 
   @override

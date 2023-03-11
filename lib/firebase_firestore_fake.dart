@@ -22,7 +22,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
     String collectionPath,
     String documentId,
   ) {
-    final documentSnaphotFake = DocumentSnaphotFake(documentSnapshotData);
+    final documentSnaphotFake = DocumentSnapshotFake(documentSnapshotData);
     final documentReferenceFake = DocumentReferenceFake(
       documentId,
       getSnapshot: () async => documentSnaphotFake,

@@ -60,7 +60,7 @@ void main() {
               documentSnapshotData[entry.key] = entry.value;
             }
           },
-          getSnapshot: () async => DocumentSnaphotFake(documentSnapshotData),
+          getSnapshot: () async => DocumentSnapshotFake(documentSnapshotData),
         ),
       ),
     );
@@ -94,7 +94,7 @@ FirebaseFirestoreFake setup() {
         documentId,
         () => DocumentReferenceFake(
           documentId,
-          getSnapshot: () async => DocumentSnaphotFake(data),
+          getSnapshot: () async => DocumentSnapshotFake(data),
         ),
       );
     },

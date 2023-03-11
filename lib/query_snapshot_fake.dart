@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QuerySnapshotFake implements QuerySnapshot<Map<String, dynamic>> {
-  QuerySnapshotFake({required this.getDocs});
+  QuerySnapshotFake(this._docs);
 
-  final List<QueryDocumentSnapshot<Map<String, dynamic>>> Function() getDocs;
+  final List<QueryDocumentSnapshot<Map<String, dynamic>>> _docs;
 
   @override
   // TODO: implement docChanges
@@ -11,13 +11,12 @@ class QuerySnapshotFake implements QuerySnapshot<Map<String, dynamic>> {
       throw UnimplementedError();
 
   @override
-  List<QueryDocumentSnapshot<Map<String, dynamic>>> get docs => getDocs();
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> get docs => _docs;
 
   @override
   // TODO: implement metadata
   SnapshotMetadata get metadata => throw UnimplementedError();
 
   @override
-  // TODO: implement size
-  int get size => throw UnimplementedError();
+  int get size => _docs.length;
 }

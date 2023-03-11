@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QueryDocumentSnapshotFake
     implements QueryDocumentSnapshot<Map<String, dynamic>> {
-  QueryDocumentSnapshotFake(this._data);
+  QueryDocumentSnapshotFake(this._data, [this._reference]);
   final Map<String, dynamic> _data;
+  final DocumentReference<Map<String, dynamic>>? _reference;
 
   @override
   dynamic operator [](Object field) {
@@ -33,7 +34,9 @@ class QueryDocumentSnapshotFake
   SnapshotMetadata get metadata => throw UnimplementedError();
 
   @override
-  // TODO: implement reference
   DocumentReference<Map<String, dynamic>> get reference =>
-      throw UnimplementedError();
+      _reference ??
+      (throw UnimplementedError(
+          'You must supply _reference to the constructor of '
+          'QueryDocumentSnapshotFake'));
 }
