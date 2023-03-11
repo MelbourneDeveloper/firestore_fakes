@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_fakes/firestore_fakes.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -75,6 +77,54 @@ void main() {
     expect(fetchedData['born'], 2023);
     expect(documentSnapshotData['born'], 2023);
     expect(firestore.collection('users').path, 'users');
+  });
+
+  test('Test Query Snapshot Streams', () async {
+    final queriesStreamController =
+        StreamController<QuerySnapshot<Map<String, dynamic>>>.broadcast();
+
+    final firestore = FirebaseFirestoreFake(
+      (n) => CollectionReferenceFake(
+        'users',
+        getWhere: (
+          field, {
+          isEqualTo,
+          isNotEqualTo,
+          isLessThan,
+          isLessThanOrEqualTo,
+          isGreaterThan,
+          isGreaterThanOrEqualTo,
+          arrayContains,
+          arrayContainsAny,
+          whereIn,
+          whereNotIn,
+          isNull,
+        }) =>
+            field != 'born'
+                ? throw UnimplementedError('Wrong field here')
+                : QueryFake(
+                    snapshotsStream: queriesStreamController.stream,
+                  ),
+      ),
+    );
+
+    final firstQuerySnapshot = firestore
+        .collection('users')
+        .where('born', isEqualTo: 2023)
+        .snapshots()
+        .first;
+
+    queriesStreamController.add(
+      QuerySnapshotFake([
+        QueryDocumentSnapshotFake({'born': 2023})
+      ]),
+    );
+
+    final fetchedData = (await firstQuerySnapshot).docs.first.data();
+
+    expect(fetchedData['born'], 2023);
+
+    await queriesStreamController.close();
   });
 }
 
