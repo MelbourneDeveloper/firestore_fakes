@@ -8,12 +8,14 @@ class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
     required this.getSnapshot,
     this.updateData,
     this.setData,
+    this.snapshotsStream,
   });
 
   final Future<DocumentSnapshot<Map<String, dynamic>>> Function() getSnapshot;
   final Future<void> Function(Map<Object, Object?>)? updateData;
   final Future<void> Function(Map<String, dynamic> data)? setData;
   final String _id;
+  final Stream<DocumentSnapshot<Map<String, dynamic>>>? snapshotsStream;
 
   @override
   CollectionReference<Map<String, dynamic>> collection(String collectionPath) {
@@ -59,10 +61,12 @@ class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
   @override
   Stream<DocumentSnapshot<Map<String, dynamic>>> snapshots({
     bool includeMetadataChanges = false,
-  }) {
-    // TODO: implement snapshots
-    throw UnimplementedError();
-  }
+  }) =>
+      snapshotsStream == null
+          ? throw UnimplementedError(
+              'You must supply snapshots to the constructor of '
+              'DocumentReferenceFake')
+          : snapshotsStream!;
 
   @override
   Future<void> update(Map<Object, Object?> data) =>
