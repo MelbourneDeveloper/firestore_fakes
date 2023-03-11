@@ -6,17 +6,16 @@ class CollectionReferenceFake
     implements CollectionReference<Map<String, dynamic>> {
   CollectionReferenceFake(
     this._path, {
-    this.addDocumentReference,
-    this.documentReference,
-    this.getWhere,
+    this.addFake,
+    this.docFake,
+    this.whereFake,
   });
 
   final Future<DocumentReference<Map<String, dynamic>>> Function(
     Map<String, dynamic> data,
-  )? addDocumentReference;
+  )? addFake;
 
-  final DocumentReference<Map<String, dynamic>> Function(String? path)?
-      documentReference;
+  final DocumentReference<Map<String, dynamic>> Function(String? path)? docFake;
 
   final Query<Map<String, dynamic>> Function(
     Object field, {
@@ -31,7 +30,7 @@ class CollectionReferenceFake
     Iterable<Object?>? whereIn,
     Iterable<Object?>? whereNotIn,
     bool? isNull,
-  })? getWhere;
+  })? whereFake;
 
   final String _path;
 
@@ -39,12 +38,12 @@ class CollectionReferenceFake
   Future<DocumentReference<Map<String, dynamic>>> add(
     Map<String, dynamic> data,
   ) =>
-      addDocumentReference == null
+      addFake == null
           ? throw UnimplementedError(
-              'You must supply addDocumentReference to the constructor of'
+              'You must supply addFake to the constructor of'
               ' CollectionReferenceFake',
             )
-          : addDocumentReference!(data);
+          : addFake!(data);
 
   @override
   AggregateQuery count() {
@@ -53,13 +52,12 @@ class CollectionReferenceFake
   }
 
   @override
-  DocumentReference<Map<String, dynamic>> doc([String? path]) =>
-      documentReference == null
-          ? throw UnimplementedError(
-              'You must supply documentReference to the constructor of '
-              'CollectionReferenceFake',
-            )
-          : documentReference!(path);
+  DocumentReference<Map<String, dynamic>> doc([String? path]) => docFake == null
+      ? throw UnimplementedError(
+          'You must supply docFake to the constructor of '
+          'CollectionReferenceFake',
+        )
+      : docFake!(path);
 
   @override
   Query<Map<String, dynamic>> endAt(Iterable<Object?> values) {
@@ -185,12 +183,12 @@ class CollectionReferenceFake
     Iterable<Object?>? whereNotIn,
     bool? isNull,
   }) =>
-      getWhere == null
+      whereFake == null
           ? throw UnimplementedError(
-              'You must supply getWhere to the constructor of'
+              'You must supply whereFake to the constructor of'
               ' CollectionReferenceFake',
             )
-          : getWhere!(
+          : whereFake!(
               field,
               isEqualTo: isEqualTo,
               isNotEqualTo: isNotEqualTo,

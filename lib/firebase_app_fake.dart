@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 
-
 class FirebaseAppFake implements FirebaseApp {
   @override
   Future<void> delete() {

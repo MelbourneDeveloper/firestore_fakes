@@ -10,12 +10,13 @@ class SettingsFake implements Settings {
   int? get cacheSizeBytes => throw UnimplementedError();
 
   @override
-  Settings copyWith(
-      {bool? persistenceEnabled,
-      String? host,
-      bool? sslEnabled,
-      int? cacheSizeBytes,
-      bool? ignoreUndefinedProperties,}) {
+  Settings copyWith({
+    bool? persistenceEnabled,
+    String? host,
+    bool? sslEnabled,
+    int? cacheSizeBytes,
+    bool? ignoreUndefinedProperties,
+  }) {
     // TODO: implement copyWith
     throw UnimplementedError();
   }

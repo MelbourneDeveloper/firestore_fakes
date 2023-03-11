@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QueryFake implements Query<Map<String, dynamic>> {
-  QueryFake({this.doGet, this.snapshotsStream});
+  QueryFake({this.getFake, this.snapshotsFake});
 
-  final Future<QuerySnapshot<Map<String, dynamic>>> Function()? doGet;
-  final Stream<QuerySnapshot<Map<String, dynamic>>>? snapshotsStream;
+  final Future<QuerySnapshot<Map<String, dynamic>>> Function()? getFake;
+  final Stream<QuerySnapshot<Map<String, dynamic>>>? snapshotsFake;
 
   @override
   AggregateQuery count() {
@@ -46,12 +46,12 @@ class QueryFake implements Query<Map<String, dynamic>> {
 
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> get([GetOptions? options]) =>
-      doGet == null
+      getFake == null
           ? throw UnimplementedError(
-              'You must doGet to the constructor of'
+              'You must getFake to the constructor of'
               ' QueryFake',
             )
-          : doGet!();
+          : getFake!();
 
   @override
   Query<Map<String, dynamic>> limit(int limit) {
@@ -79,11 +79,11 @@ class QueryFake implements Query<Map<String, dynamic>> {
   Stream<QuerySnapshot<Map<String, dynamic>>> snapshots({
     bool includeMetadataChanges = false,
   }) =>
-      snapshotsStream == null
+      snapshotsFake == null
           ? throw UnimplementedError(
-              'You must supply snapshots to the constructor of '
+              'You must supply snapshotsFake to the constructor of '
               'QueryFake')
-          : snapshotsStream!;
+          : snapshotsFake!;
 
   @override
   Query<Map<String, dynamic>> startAfter(Iterable<Object?> values) {

@@ -11,7 +11,7 @@ void main() {
 
       final collectionRef = CollectionReferenceFake(
         'my-collection',
-        getWhere: (
+        whereFake: (
           field, {
           arrayContains,
           arrayContainsAny,
@@ -28,7 +28,7 @@ void main() {
             field != 'name'
                 ? throw ArgumentError('Wrong field here')
                 : QueryFake(
-                    doGet: () async => QuerySnapshotFake(
+                    getFake: () async => QuerySnapshotFake(
                       [QueryDocumentSnapshotFake(expectedData)],
                     ),
                   ),

@@ -55,14 +55,14 @@ void main() {
     final firestore = FirebaseFirestoreFake(
       (n) => CollectionReferenceFake(
         'users',
-        documentReference: (id) => DocumentReferenceFake(
+        docFake: (id) => DocumentReferenceFake(
           documentId,
-          setData: (d) async {
+          setFake: (d) async {
             for (final entry in d.entries) {
               documentSnapshotData[entry.key] = entry.value;
             }
           },
-          getSnapshot: () async =>
+          getFake: () async =>
               DocumentSnapshotFake(documentId, documentSnapshotData),
         ),
       ),
@@ -89,7 +89,7 @@ void main() {
     final firestore = FirebaseFirestoreFake(
       (n) => CollectionReferenceFake(
         'users',
-        getWhere: (
+        whereFake: (
           field, {
           isEqualTo,
           isNotEqualTo,
@@ -106,7 +106,7 @@ void main() {
             field != 'born'
                 ? throw UnimplementedError('Wrong field here')
                 : QueryFake(
-                    snapshotsStream: queriesStreamController.stream,
+                    snapshotsFake: queriesStreamController.stream,
                   ),
       ),
     );
@@ -140,9 +140,9 @@ void main() {
     final firestore = FirebaseFirestoreFake(
       (n) => CollectionReferenceFake(
         'users',
-        documentReference: (id) => DocumentReferenceFake(
+        docFake: (id) => DocumentReferenceFake(
           documentId,
-          snapshotsStream: documentsStreamController.stream,
+          snapshotsFake: documentsStreamController.stream,
         ),
       ),
     );
@@ -172,7 +172,7 @@ FirebaseFirestoreFake setup() {
 
   final usersCollectionReference = CollectionReferenceFake(
     'users',
-    addDocumentReference: (data) async {
+    addFake: (data) async {
       //Generate a random documentId
       final documentId = const Uuid().v4();
 
@@ -181,11 +181,11 @@ FirebaseFirestoreFake setup() {
         documentId,
         () => DocumentReferenceFake(
           documentId,
-          getSnapshot: () async => DocumentSnapshotFake(documentId, data),
+          getFake: () async => DocumentSnapshotFake(documentId, data),
         ),
       );
     },
-    documentReference: (path) => users[path]!,
+    docFake: (path) => users[path]!,
   );
 
   //Declare the map of collections

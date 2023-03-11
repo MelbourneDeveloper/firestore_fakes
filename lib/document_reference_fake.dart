@@ -5,17 +5,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
   DocumentReferenceFake(
     this._id, {
-    this.getSnapshot,
+    this.getFake,
     this.updateData,
-    this.setData,
-    this.snapshotsStream,
+    this.setFake,
+    this.snapshotsFake,
   });
 
-  final Future<DocumentSnapshot<Map<String, dynamic>>> Function()? getSnapshot;
+  final Future<DocumentSnapshot<Map<String, dynamic>>> Function()? getFake;
   final Future<void> Function(Map<Object, Object?>)? updateData;
-  final Future<void> Function(Map<String, dynamic> data)? setData;
+  final Future<void> Function(Map<String, dynamic> data)? setFake;
   final String _id;
-  final Stream<DocumentSnapshot<Map<String, dynamic>>>? snapshotsStream;
+  final Stream<DocumentSnapshot<Map<String, dynamic>>>? snapshotsFake;
 
   @override
   CollectionReference<Map<String, dynamic>> collection(String collectionPath) {
@@ -35,11 +35,11 @@ class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
 
   @override
   Future<DocumentSnapshot<Map<String, dynamic>>> get([GetOptions? options]) =>
-      getSnapshot == null
+      getFake == null
           ? throw UnimplementedError(
-              'You must supply getSnapshot to the constructor of '
+              'You must supply getFake to the constructor of '
               'DocumentReferenceFake')
-          : getSnapshot!();
+          : getFake!();
 
   @override
   // TODO: implement id
@@ -56,21 +56,21 @@ class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
 
   @override
   Future<void> set(Map<String, dynamic> data, [SetOptions? options]) =>
-      setData == null
+      setFake == null
           ? throw UnimplementedError(
-              'You must supply setData to the constructor of '
+              'You must supply setFake to the constructor of '
               'DocumentReferenceFake')
-          : setData!(data);
+          : setFake!(data);
 
   @override
   Stream<DocumentSnapshot<Map<String, dynamic>>> snapshots({
     bool includeMetadataChanges = false,
   }) =>
-      snapshotsStream == null
+      snapshotsFake == null
           ? throw UnimplementedError(
-              'You must supply snapshots to the constructor of '
+              'You must supply snapshotsFake to the constructor of '
               'DocumentReferenceFake')
-          : snapshotsStream!;
+          : snapshotsFake!;
 
   @override
   Future<void> update(Map<Object, Object?> data) =>

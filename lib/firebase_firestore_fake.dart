@@ -26,7 +26,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
         DocumentSnapshotFake(documentId, documentSnapshotData);
     final documentReferenceFake = DocumentReferenceFake(
       documentId,
-      getSnapshot: () async => documentSnaphotFake,
+      getFake: () async => documentSnaphotFake,
       updateData: (data) async {
         for (final entry in data.entries) {
           documentSnapshotData[entry.key as String] = entry.value;
@@ -37,7 +37,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
     return FirebaseFirestoreFake(
       (name) => CollectionReferenceFake(
         collectionPath,
-        documentReference: (path) => documentReferenceFake,
+        docFake: (path) => documentReferenceFake,
       ),
     );
   }
