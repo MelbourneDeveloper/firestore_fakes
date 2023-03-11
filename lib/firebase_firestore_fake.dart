@@ -1,5 +1,3 @@
-// TODO: Put public facing types in this file.
-
 // ignore_for_file:  always_put_required_named_parameters_first, strict_raw_type
 
 import 'dart:typed_data';
@@ -15,7 +13,9 @@ import 'package:firestore_fakes/settings_fake.dart';
 
 /// Checks if you are awesome. Spoiler: you are.
 class FirebaseFirestoreFake implements FirebaseFirestore {
-  FirebaseFirestoreFake(this._collection);
+  FirebaseFirestoreFake({
+    CollectionReference<Map<String, dynamic>> Function(String name)? collection,
+  }) : _collection = collection;
 
   factory FirebaseFirestoreFake.fromSingleDocumentData(
     Map<String, dynamic> documentSnapshotData,
@@ -35,14 +35,14 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
     );
 
     return FirebaseFirestoreFake(
-      (name) => CollectionReferenceFake(
+      collection: (name) => CollectionReferenceFake(
         collectionPath,
         docFake: (path) => documentReferenceFake,
       ),
     );
   }
 
-  final CollectionReference<Map<String, dynamic>> Function(String name)
+  final CollectionReference<Map<String, dynamic>> Function(String name)?
       _collection;
 
   @override
@@ -65,7 +65,12 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
   @override
   CollectionReference<Map<String, dynamic>> collection(String collectionPath) =>
-      _collection(collectionPath);
+      _collection == null
+          ? throw UnimplementedError(
+              'You must pass collection to the constructor of'
+              ' FirebaseFirestoreFake',
+            )
+          : _collection!(collectionPath);
 
   @override
   Query<Map<String, dynamic>> collectionGroup(String collectionPath) {

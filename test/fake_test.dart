@@ -53,7 +53,7 @@ void main() {
     final documentSnapshotData = <String, dynamic>{};
 
     final firestore = FirebaseFirestoreFake(
-      (n) => CollectionReferenceFake(
+      collection: (n) => CollectionReferenceFake(
         'users',
         docFake: (id) => DocumentReferenceFake(
           documentId,
@@ -87,7 +87,7 @@ void main() {
         StreamController<QuerySnapshot<Map<String, dynamic>>>.broadcast();
 
     final firestore = FirebaseFirestoreFake(
-      (n) => CollectionReferenceFake(
+      collection: (n) => CollectionReferenceFake(
         'users',
         whereFake: (
           field, {
@@ -138,7 +138,7 @@ void main() {
         StreamController<DocumentSnapshot<Map<String, dynamic>>>.broadcast();
 
     final firestore = FirebaseFirestoreFake(
-      (n) => CollectionReferenceFake(
+      collection: (n) => CollectionReferenceFake(
         'users',
         docFake: (id) => DocumentReferenceFake(
           documentId,
@@ -172,7 +172,7 @@ FirebaseFirestoreFake setup() {
 
   final usersCollectionReference = CollectionReferenceFake(
     'users',
-    addFake: (data) async {
+    add: (data) async {
       //Generate a random documentId
       final documentId = const Uuid().v4();
 
@@ -194,7 +194,7 @@ FirebaseFirestoreFake setup() {
   };
 
   //Return the fake firestore
-  return FirebaseFirestoreFake((name) => collections[name]!);
+  return FirebaseFirestoreFake(collection: (name) => collections[name]!);
 }
 
 ///Act: This is the real code that you might find in your app

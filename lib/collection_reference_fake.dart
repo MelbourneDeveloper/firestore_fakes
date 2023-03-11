@@ -8,15 +8,19 @@ class CollectionReferenceFake
     implements CollectionReference<Map<String, dynamic>> {
   CollectionReferenceFake(
     this._path, {
-    this.addFake,
+    Future<DocumentReference<Map<String, dynamic>>> Function(
+      Map<String, dynamic>,
+    )?
+        add,
     this.docFake,
     this.whereFake,
     FirebaseFirestore? firestore,
-  }) : _firestore = firestore ?? FirebaseFirestoreFake();
+  })  : _add = add,
+        _firestore = firestore ?? FirebaseFirestoreFake();
 
   final Future<DocumentReference<Map<String, dynamic>>> Function(
     Map<String, dynamic> data,
-  )? addFake;
+  )? _add;
 
   final DocumentReference<Map<String, dynamic>> Function(String? path)? docFake;
 
@@ -43,12 +47,12 @@ class CollectionReferenceFake
   Future<DocumentReference<Map<String, dynamic>>> add(
     Map<String, dynamic> data,
   ) =>
-      addFake == null
+      _add == null
           ? throw UnimplementedError(
-              'You must supply addFake to the constructor of'
+              'You must supply add to the constructor of'
               ' CollectionReferenceFake',
             )
-          : addFake!(data);
+          : _add!(data);
 
   @override
   AggregateQuery count() {
