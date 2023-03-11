@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QueryFake implements Query<Map<String, dynamic>> {
+  QueryFake({this.doGet});
+
+  final Future<QuerySnapshot<Map<String, dynamic>>> Function()? doGet;
+
   @override
   AggregateQuery count() {
     // TODO: implement count
@@ -40,10 +44,13 @@ class QueryFake implements Query<Map<String, dynamic>> {
   FirebaseFirestore get firestore => throw UnimplementedError();
 
   @override
-  Future<QuerySnapshot<Map<String, dynamic>>> get([GetOptions? options]) {
-    // TODO: implement get
-    throw UnimplementedError();
-  }
+  Future<QuerySnapshot<Map<String, dynamic>>> get([GetOptions? options]) =>
+      doGet == null
+          ? throw UnimplementedError(
+              'You must doGet to the constructor of'
+              ' QueryFake',
+            )
+          : doGet!();
 
   @override
   Query<Map<String, dynamic>> limit(int limit) {

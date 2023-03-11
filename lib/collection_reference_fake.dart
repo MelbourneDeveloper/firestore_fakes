@@ -4,7 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CollectionReferenceFake
     implements CollectionReference<Map<String, dynamic>> {
-  CollectionReferenceFake({
+  CollectionReferenceFake(
+    this._path, {
     this.addDocumentReference,
     this.documentReference,
     this.getWhere,
@@ -31,6 +32,8 @@ class CollectionReferenceFake
     Iterable<Object?>? whereNotIn,
     bool? isNull,
   })? getWhere;
+
+  final String _path;
 
   @override
   Future<DocumentReference<Map<String, dynamic>>> add(
@@ -129,7 +132,7 @@ class CollectionReferenceFake
 
   @override
   // TODO: implement path
-  String get path => throw UnimplementedError();
+  String get path => _path;
 
   @override
   Stream<QuerySnapshot<Map<String, dynamic>>> snapshots({

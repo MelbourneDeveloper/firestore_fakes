@@ -19,6 +19,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
   factory FirebaseFirestoreFake.fromSingleDocumentData(
     Map<String, dynamic> documentSnapshotData,
+    String collectionPath,
     String documentId,
   ) {
     final documentSnaphotFake = DocumentSnaphotFake(documentSnapshotData);
@@ -34,6 +35,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
     return FirebaseFirestoreFake(
       (name) => CollectionReferenceFake(
+        collectionPath,
         documentReference: (path) => documentReferenceFake,
       ),
     );

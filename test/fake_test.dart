@@ -34,6 +34,7 @@ void main() {
 
     final firestore = FirebaseFirestoreFake.fromSingleDocumentData(
       {'born': 1800},
+      'users',
       documentId,
     );
 
@@ -54,6 +55,7 @@ void main() {
 
     final firestore = FirebaseFirestoreFake(
       (n) => CollectionReferenceFake(
+        'users',
         documentReference: (id) => DocumentReferenceFake(
           documentId,
           setData: (d) async {
@@ -75,6 +77,7 @@ void main() {
     final fetchedData = (await fetchedDocumentReference.get()).data()!;
     expect(fetchedData['born'], 2023);
     expect(documentSnapshotData['born'], 2023);
+    expect(firestore.collection('users').path, 'users');
   });
 }
 
@@ -84,6 +87,7 @@ FirebaseFirestoreFake setup() {
   final users = <String, DocumentReferenceFake>{};
 
   final usersCollectionReference = CollectionReferenceFake(
+    'users',
     addDocumentReference: (data) async {
       //Generate a random documentId
       final documentId = const Uuid().v4();
@@ -101,7 +105,9 @@ FirebaseFirestoreFake setup() {
   );
 
   //Declare the map of collections
-  final collections = {'users': usersCollectionReference};
+  final collections = {
+    usersCollectionReference.path: usersCollectionReference,
+  };
 
   //Return the fake firestore
   return FirebaseFirestoreFake((name) => collections[name]!);
