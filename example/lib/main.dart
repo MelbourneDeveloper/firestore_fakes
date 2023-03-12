@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_fakes/firestore_fakes.dart';
 import 'package:flutter/material.dart';
 
-final firestore = FirebaseFirestoreFake.stateful();
+final FirebaseFirestore firestore = FirebaseFirestoreFake.stateful();
 
 class Book {
   Book(this.isbn, this.title, this.author, this.category);
@@ -59,7 +60,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               : const CircularProgressIndicator.adaptive(),
           floatingActionButton: FloatingActionButton(
-            onPressed: _incrementCounter,
+            onPressed: () async =>
+                firestore.collection('books').add(<String, dynamic>{
+              'title': 'The Art of War',
+              'category': 'philosophy',
+            }),
             tooltip: 'Increment',
             child: const Icon(Icons.add),
           ),
