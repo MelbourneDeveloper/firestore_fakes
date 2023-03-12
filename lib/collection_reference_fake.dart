@@ -12,17 +12,31 @@ class CollectionReferenceFake
       Map<String, dynamic>,
     )?
         add,
-    this.docFake,
-    this.whereFake,
+    DocumentReference<Map<String, dynamic>> Function(String?)? doc,
+    Query<Map<String, dynamic>> Function(Object,
+            {Object? arrayContains,
+            Iterable<Object?>? arrayContainsAny,
+            Object? isEqualTo,
+            Object? isGreaterThan,
+            Object? isGreaterThanOrEqualTo,
+            Object? isLessThan,
+            Object? isLessThanOrEqualTo,
+            Object? isNotEqualTo,
+            bool? isNull,
+            Iterable<Object?>? whereIn,
+            Iterable<Object?>? whereNotIn,})?
+        where,
     FirebaseFirestore? firestore,
-  })  : _add = add,
+  })  : _where = where,
+        _doc = doc,
+        _add = add,
         _firestore = firestore ?? FirebaseFirestoreFake();
 
   final Future<DocumentReference<Map<String, dynamic>>> Function(
     Map<String, dynamic> data,
   )? _add;
 
-  final DocumentReference<Map<String, dynamic>> Function(String? path)? docFake;
+  final DocumentReference<Map<String, dynamic>> Function(String? path)? _doc;
 
   final Query<Map<String, dynamic>> Function(
     Object field, {
@@ -37,7 +51,7 @@ class CollectionReferenceFake
     Iterable<Object?>? whereIn,
     Iterable<Object?>? whereNotIn,
     bool? isNull,
-  })? whereFake;
+  })? _where;
 
   final String _path;
 
@@ -61,12 +75,12 @@ class CollectionReferenceFake
   }
 
   @override
-  DocumentReference<Map<String, dynamic>> doc([String? path]) => docFake == null
+  DocumentReference<Map<String, dynamic>> doc([String? path]) => _doc == null
       ? throw UnimplementedError(
-          'You must supply docFake to the constructor of '
+          'You must supply doc to the constructor of '
           'CollectionReferenceFake',
         )
-      : docFake!(path);
+      : _doc!(path);
 
   @override
   Query<Map<String, dynamic>> endAt(Iterable<Object?> values) {
@@ -191,12 +205,12 @@ class CollectionReferenceFake
     Iterable<Object?>? whereNotIn,
     bool? isNull,
   }) =>
-      whereFake == null
+      _where == null
           ? throw UnimplementedError(
-              'You must supply whereFake to the constructor of'
+              'You must supply where to the constructor of'
               ' CollectionReferenceFake',
             )
-          : whereFake!(
+          : _where!(
               field,
               isEqualTo: isEqualTo,
               isNotEqualTo: isNotEqualTo,

@@ -37,7 +37,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
     return FirebaseFirestoreFake(
       collection: (name) => CollectionReferenceFake(
         collectionPath,
-        docFake: (path) => documentReferenceFake,
+        doc: (path) => documentReferenceFake,
       ),
     );
   }

@@ -55,7 +55,7 @@ void main() {
     final firestore = FirebaseFirestoreFake(
       collection: (n) => CollectionReferenceFake(
         'users',
-        docFake: (id) => DocumentReferenceFake(
+        doc: (id) => DocumentReferenceFake(
           documentId,
           setFake: (d) async {
             for (final entry in d.entries) {
@@ -89,7 +89,7 @@ void main() {
     final firestore = FirebaseFirestoreFake(
       collection: (n) => CollectionReferenceFake(
         'users',
-        whereFake: (
+        where: (
           field, {
           isEqualTo,
           isNotEqualTo,
@@ -140,7 +140,7 @@ void main() {
     final firestore = FirebaseFirestoreFake(
       collection: (n) => CollectionReferenceFake(
         'users',
-        docFake: (id) => DocumentReferenceFake(
+        doc: (id) => DocumentReferenceFake(
           documentId,
           snapshotsFake: documentsStreamController.stream,
         ),
@@ -185,7 +185,7 @@ FirebaseFirestoreFake setup() {
         ),
       );
     },
-    docFake: (path) => users[path]!,
+    doc: (path) => users[path]!,
   );
 
   //Declare the map of collections

@@ -11,7 +11,7 @@ void main() {
 
       final collectionRef = CollectionReferenceFake(
         'my-collection',
-        whereFake: (
+        where: (
           field, {
           arrayContains,
           arrayContainsAny,
