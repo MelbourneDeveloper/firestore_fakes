@@ -1,13 +1,9 @@
 // ignore_for_file:  always_put_required_named_parameters_first, strict_raw_type
 
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firestore_fakes/collection_reference_fake.dart';
-import 'package:firestore_fakes/document_reference_fake.dart';
-import 'package:firestore_fakes/document_snapshot_fake.dart';
 import 'package:firestore_fakes/firebase_app_fake.dart';
 import 'package:firestore_fakes/settings_fake.dart';
 
@@ -26,31 +22,6 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
         collections!.putIfAbsent(p, () => CollectionReferenceFake.stateful(p));
         return collections[p]!;
       },
-    );
-  }
-
-  factory FirebaseFirestoreFake.fromSingleDocumentData(
-    Map<String, dynamic> documentSnapshotData,
-    String collectionPath,
-    String documentId,
-  ) {
-    final documentSnaphotFake =
-        DocumentSnapshotFake(documentId, documentSnapshotData);
-    final documentReferenceFake = DocumentReferenceFake(
-      documentId,
-      get: () async => documentSnaphotFake,
-      update: (data) async {
-        for (final entry in data.entries) {
-          documentSnapshotData[entry.key as String] = entry.value;
-        }
-      },
-    );
-
-    return FirebaseFirestoreFake(
-      collection: (name) => CollectionReferenceFake(
-        collectionPath,
-        doc: (path) => documentReferenceFake,
-      ),
     );
   }
 

@@ -91,13 +91,50 @@ void main() {
     expect(data['last'], 'Lovelace');
   });
 
-  test('Test update and then retrieve it', () async {
+  test('Test update and then retrieve it - Stateful', () async {
+    final collectionReferenceFake = CollectionReferenceFake.stateful('users');
+
+    final documentReference = await collectionReferenceFake.add({'born': 1800});
+
+    final firestore = FirebaseFirestoreFake.stateful(
+      collections: {collectionReferenceFake.path: collectionReferenceFake},
+    );
+
+    await firestore
+        .collection('users')
+        .doc(documentReference.id)
+        .update({'born': 2023});
+
+    final fetchedDocumentReference =
+        firestore.collection('users').doc(documentReference.id);
+
+    //Assert: Check the results
+    final data = (await fetchedDocumentReference.get()).data()!;
+    expect(data['born'], 2023);
+  });
+
+  test('Test update and then retrieve it - Stateless', () async {
     const documentId = '123';
 
-    final firestore = FirebaseFirestoreFake.fromSingleDocumentData(
-      {'born': 1800},
-      'users',
+    final documentSnapshotData = <String, dynamic>{'born': 1800};
+
+    final documentSnaphotFake =
+        DocumentSnapshotFake(documentId, documentSnapshotData);
+    final documentReferenceFake = DocumentReferenceFake(
       documentId,
+      get: () async => documentSnaphotFake,
+      update: (data) async {
+        for (final entry in data.entries) {
+          documentSnapshotData[entry.key as String] = entry.value;
+        }
+      },
+    );
+
+    final firestore = FirebaseFirestoreFake(
+      collection: (name) => CollectionReferenceFake(
+        'users',
+        doc: (path) => documentReferenceFake,
+      ),
     );
 
     await firestore.collection('users').doc(documentId).update({'born': 2023});
