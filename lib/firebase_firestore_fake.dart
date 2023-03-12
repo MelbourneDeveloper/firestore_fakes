@@ -19,6 +19,8 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
     return FirebaseFirestoreFake(
       collection: (p) {
+        //TODO: what is the standard behaviour in firestore?
+        //will it add the collection automatically?
         collections!.putIfAbsent(p, () => CollectionReferenceFake.stateful(p));
         return collections[p]!;
       },
