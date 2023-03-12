@@ -57,12 +57,12 @@ void main() {
         'users',
         doc: (id) => DocumentReferenceFake(
           documentId,
-          setFake: (d) async {
+          set: (d) async {
             for (final entry in d.entries) {
               documentSnapshotData[entry.key] = entry.value;
             }
           },
-          getFake: () async =>
+          get: () async =>
               DocumentSnapshotFake(documentId, documentSnapshotData),
         ),
       ),
@@ -106,7 +106,7 @@ void main() {
             field != 'born'
                 ? throw UnimplementedError('Wrong field here')
                 : QueryFake(
-                    snapshotsFake: queriesStreamController.stream,
+                    snapshots: queriesStreamController.stream,
                   ),
       ),
     );
@@ -142,7 +142,7 @@ void main() {
         'users',
         doc: (id) => DocumentReferenceFake(
           documentId,
-          snapshotsFake: documentsStreamController.stream,
+          snapshots: documentsStreamController.stream,
         ),
       ),
     );
@@ -181,7 +181,7 @@ FirebaseFirestoreFake setup() {
         documentId,
         () => DocumentReferenceFake(
           documentId,
-          getFake: () async => DocumentSnapshotFake(documentId, data),
+          get: () async => DocumentSnapshotFake(documentId, data),
         ),
       );
     },

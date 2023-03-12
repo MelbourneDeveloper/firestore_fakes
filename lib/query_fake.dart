@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class QueryFake implements Query<Map<String, dynamic>> {
-  QueryFake({this.getFake, this.snapshotsFake});
+  QueryFake({
+    Future<QuerySnapshot<Map<String, dynamic>>> Function()? get,
+    Stream<QuerySnapshot<Map<String, dynamic>>>? snapshots,
+  })  : _snapshots = snapshots,
+        _get = get;
 
-  final Future<QuerySnapshot<Map<String, dynamic>>> Function()? getFake;
-  final Stream<QuerySnapshot<Map<String, dynamic>>>? snapshotsFake;
+  final Future<QuerySnapshot<Map<String, dynamic>>> Function()? _get;
+  final Stream<QuerySnapshot<Map<String, dynamic>>>? _snapshots;
 
   @override
   AggregateQuery count() {
@@ -46,12 +50,12 @@ class QueryFake implements Query<Map<String, dynamic>> {
 
   @override
   Future<QuerySnapshot<Map<String, dynamic>>> get([GetOptions? options]) =>
-      getFake == null
+      _get == null
           ? throw UnimplementedError(
-              'You must getFake to the constructor of'
+              'You must get to the constructor of'
               ' QueryFake',
             )
-          : getFake!();
+          : _get!();
 
   @override
   Query<Map<String, dynamic>> limit(int limit) {
@@ -79,11 +83,11 @@ class QueryFake implements Query<Map<String, dynamic>> {
   Stream<QuerySnapshot<Map<String, dynamic>>> snapshots({
     bool includeMetadataChanges = false,
   }) =>
-      snapshotsFake == null
+      _snapshots == null
           ? throw UnimplementedError(
-              'You must supply snapshotsFake to the constructor of '
+              'You must supply snapshots to the constructor of '
               'QueryFake')
-          : snapshotsFake!;
+          : _snapshots!;
 
   @override
   Query<Map<String, dynamic>> startAfter(Iterable<Object?> values) {

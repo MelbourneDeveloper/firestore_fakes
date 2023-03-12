@@ -28,7 +28,7 @@ void main() {
             field != 'name'
                 ? throw ArgumentError('Wrong field here')
                 : QueryFake(
-                    getFake: () async => QuerySnapshotFake(
+                    get: () async => QuerySnapshotFake(
                       [QueryDocumentSnapshotFake(expectedData)],
                     ),
                   ),
