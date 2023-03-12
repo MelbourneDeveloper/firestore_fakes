@@ -92,6 +92,7 @@ void main() {
   });
 
   test('Test update and then retrieve it - Stateful', () async {
+    //Arrange: create a collection with an existing user
     final collectionReferenceFake = CollectionReferenceFake.stateful('users');
 
     final documentReference = await collectionReferenceFake.add({'born': 1800});
@@ -100,6 +101,7 @@ void main() {
       collections: {collectionReferenceFake.path: collectionReferenceFake},
     );
 
+    //Act: this is the actual code to test
     await firestore
         .collection('users')
         .doc(documentReference.id)
@@ -114,6 +116,7 @@ void main() {
   });
 
   test('Test update and then retrieve it - Stateless', () async {
+    //Arrange
     const documentId = '123';
 
     final documentSnapshotData = <String, dynamic>{'born': 1800};
@@ -137,6 +140,7 @@ void main() {
       ),
     );
 
+    //Act: This is the actual code to test
     await firestore.collection('users').doc(documentId).update({'born': 2023});
 
     final fetchedDocumentReference =
@@ -148,6 +152,7 @@ void main() {
   });
 
   test('Test update and then retrieve it with state', () async {
+    //Arrange: create a collection with an existing user
     const documentId = '123';
 
     final documentReferenceFake =
@@ -160,6 +165,7 @@ void main() {
       ),
     );
 
+    //Act: this is the actual code
     await firestore.collection('users').doc(documentId).update({'born': 2023});
 
     final fetchedDocumentReference =
@@ -170,7 +176,7 @@ void main() {
     expect(data['born'], 2023);
   });
 
-  test('Test set and then retrieve it', () async {
+  test('Test set and then retrieve it - Stateless', () async {
     const documentId = '123';
 
     final documentSnapshotData = <String, dynamic>{};
