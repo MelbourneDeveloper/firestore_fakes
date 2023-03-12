@@ -11,7 +11,6 @@ import 'package:firestore_fakes/document_snapshot_fake.dart';
 import 'package:firestore_fakes/firebase_app_fake.dart';
 import 'package:firestore_fakes/settings_fake.dart';
 
-/// Checks if you are awesome. Spoiler: you are.
 class FirebaseFirestoreFake implements FirebaseFirestore {
   FirebaseFirestoreFake({
     CollectionReference<Map<String, dynamic>> Function(String name)? collection,

@@ -47,6 +47,29 @@ void main() {
     expect(data['born'], 2023);
   });
 
+  test('Test update and then retrieve it with state', () async {
+    const documentId = '123';
+
+    final documentReferenceFake =
+        DocumentReferenceFake.stateful(documentId, {'born': 1800});
+
+    final firestore = FirebaseFirestoreFake(
+      collection: (name) => CollectionReferenceFake(
+        'users',
+        doc: (path) => documentReferenceFake,
+      ),
+    );
+
+    await firestore.collection('users').doc(documentId).update({'born': 2023});
+
+    final fetchedDocumentReference =
+        firestore.collection('users').doc(documentId);
+
+    //Assert: Check the results
+    final data = (await fetchedDocumentReference.get()).data()!;
+    expect(data['born'], 2023);
+  });
+
   test('Test set and then retrieve it', () async {
     const documentId = '123';
 

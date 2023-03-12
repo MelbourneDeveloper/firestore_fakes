@@ -2,6 +2,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:firestore_fakes/firestore_fakes.dart';
+
 class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
   DocumentReferenceFake(
     this._id, {
@@ -13,6 +15,25 @@ class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
         _snapshots = snapshots,
         _update = update,
         _get = get;
+
+  factory DocumentReferenceFake.stateful(
+    String id,
+    Map<String, dynamic> documentSnapshotData,
+  ) =>
+      DocumentReferenceFake(
+        id,
+        get: () async => DocumentSnapshotFake(id, documentSnapshotData),
+        update: (data) async {
+          for (final entry in data.entries) {
+            documentSnapshotData[entry.key as String] = entry.value;
+          }
+        },
+        set: (data) async {
+          for (final entry in data.entries) {
+            documentSnapshotData[entry.key] = entry.value;
+          }
+        },
+      );
 
   final Future<DocumentSnapshot<Map<String, dynamic>>> Function()? _get;
   final Future<void> Function(Map<Object, Object?>)? _update;
