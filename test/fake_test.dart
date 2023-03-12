@@ -232,7 +232,7 @@ void main() {
           whereNotIn,
           isNull,
         }) =>
-            field != 'born'
+            field != 'born' || isEqualTo != 2023
                 ? throw UnimplementedError('Wrong field here')
                 : QueryFake(
                     snapshots: queriesStreamController.stream,
