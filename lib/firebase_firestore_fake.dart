@@ -16,6 +16,19 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
     CollectionReference<Map<String, dynamic>> Function(String name)? collection,
   }) : _collection = collection;
 
+  factory FirebaseFirestoreFake.stateful({
+    Map<String, CollectionReferenceFake>? collections,
+  }) {
+    collections ??= <String, CollectionReferenceFake>{};
+
+    return FirebaseFirestoreFake(
+      collection: (p) {
+        collections!.putIfAbsent(p, () => CollectionReferenceFake.stateful(p));
+        return collections[p]!;
+      },
+    );
+  }
+
   factory FirebaseFirestoreFake.fromSingleDocumentData(
     Map<String, dynamic> documentSnapshotData,
     String collectionPath,

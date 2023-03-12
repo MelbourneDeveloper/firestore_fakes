@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firestore_fakes/firestore_fakes.dart';
+import 'package:uuid/uuid.dart';
 
 class CollectionReferenceFake
     implements CollectionReference<Map<String, dynamic>> {
@@ -13,24 +14,40 @@ class CollectionReferenceFake
     )?
         add,
     DocumentReference<Map<String, dynamic>> Function(String?)? doc,
-    Query<Map<String, dynamic>> Function(Object,
-            {Object? arrayContains,
-            Iterable<Object?>? arrayContainsAny,
-            Object? isEqualTo,
-            Object? isGreaterThan,
-            Object? isGreaterThanOrEqualTo,
-            Object? isLessThan,
-            Object? isLessThanOrEqualTo,
-            Object? isNotEqualTo,
-            bool? isNull,
-            Iterable<Object?>? whereIn,
-            Iterable<Object?>? whereNotIn,})?
+    Query<Map<String, dynamic>> Function(
+      Object field, {
+      Object? arrayContains,
+      Iterable<Object?>? arrayContainsAny,
+      Object? isEqualTo,
+      Object? isGreaterThan,
+      Object? isGreaterThanOrEqualTo,
+      Object? isLessThan,
+      Object? isLessThanOrEqualTo,
+      Object? isNotEqualTo,
+      bool? isNull,
+      Iterable<Object?>? whereIn,
+      Iterable<Object?>? whereNotIn,
+    })?
         where,
     FirebaseFirestore? firestore,
   })  : _where = where,
         _doc = doc,
         _add = add,
         _firestore = firestore ?? FirebaseFirestoreFake();
+
+  factory CollectionReferenceFake.stateful(String path) {
+    final documents = <String, DocumentReferenceFake>{};
+    return CollectionReferenceFake(
+      path,
+      add: (data) async {
+        final documentId = const Uuid().v4();
+        final documentReference =
+            DocumentReferenceFake.stateful(documentId, data);
+        return documents[documentId] = documentReference;
+      },
+      doc: (id) => documents[id]!,
+    );
+  }
 
   final Future<DocumentReference<Map<String, dynamic>>> Function(
     Map<String, dynamic> data,

@@ -1,25 +1,88 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_fakes/firestore_fakes.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
-  test('Test adding a user to the users collection and then retrieving it',
-      () async {
-    //Arrange: Configure the fake Firestore
-    final firestore = setup();
+  test('Test adding user and then retrieving it - Stateful', () async {
+    //Arrange: Create the fake Firestore and let it manager the state internally
+    final firestore = FirebaseFirestoreFake.stateful();
 
     //Act: call the actual code
-    final actualDocumentSnapshot = await addAndFetchUser(
-      firestore,
-      <String, dynamic>{
-        'first': 'Ada',
-        'last': 'Lovelace',
-        'born': 1815,
+    //Add user to users collection
+    final documentReference =
+        await firestore.collection('users').add(<String, dynamic>{
+      'first': 'Ada',
+      'last': 'Lovelace',
+      'born': 1815,
+    });
+
+    //Get document by Id
+    final fetchedDocumentReference =
+        firestore.collection('users').doc(documentReference.id);
+
+    //Return the document
+    final actualDocumentSnapshot = await fetchedDocumentReference.get();
+
+    //Assert: Check the results
+    final data = actualDocumentSnapshot.data()!;
+    expect(data['born'], 1815);
+    expect(data['first'], 'Ada');
+    expect(data['last'], 'Lovelace');
+  });
+
+  test('Test adding user and then retrieving it - Stateless', () async {
+    //Arrange: Configure the fake Firestore
+
+    //Note: We maintain the state external to the fakes
+
+    //These are the user documents
+    final users = <String, DocumentReferenceFake>{};
+
+    //This is the users collection
+    final usersCollectionReference = CollectionReferenceFake(
+      'users',
+      add: (data) async {
+        //Generate a random documentId
+        final documentId = const Uuid().v4();
+
+        //Put the document in the users map by id and return it
+        return users.putIfAbsent(
+          documentId,
+          () => DocumentReferenceFake(
+            documentId,
+            get: () async => DocumentSnapshotFake(documentId, data),
+          ),
+        );
       },
+      doc: (path) => users[path]!,
     );
+
+    //Declare the map of collections
+    final collections = {
+      usersCollectionReference.path: usersCollectionReference,
+    };
+
+    //Create the fake firestore and give it access to the collections
+    final firestore =
+        FirebaseFirestoreFake(collection: (name) => collections[name]!);
+
+    //Act: call the actual code
+    //Add user to users collection
+    final documentReference =
+        await firestore.collection('users').add(<String, dynamic>{
+      'first': 'Ada',
+      'last': 'Lovelace',
+      'born': 1815,
+    });
+
+    //Get document by Id
+    final fetchedDocumentReference =
+        firestore.collection('users').doc(documentReference.id);
+
+    //Return the document
+    final actualDocumentSnapshot = await fetchedDocumentReference.get();
 
     //Assert: Check the results
     final data = actualDocumentSnapshot.data()!;
@@ -186,52 +249,4 @@ void main() {
 
     await documentsStreamController.close();
   });
-}
-
-///Arrange: Configure the fake
-FirebaseFirestoreFake setup() {
-  //The users collection
-  final users = <String, DocumentReferenceFake>{};
-
-  final usersCollectionReference = CollectionReferenceFake(
-    'users',
-    add: (data) async {
-      //Generate a random documentId
-      final documentId = const Uuid().v4();
-
-      //Put the document in the users map by id and return it
-      return users.putIfAbsent(
-        documentId,
-        () => DocumentReferenceFake(
-          documentId,
-          get: () async => DocumentSnapshotFake(documentId, data),
-        ),
-      );
-    },
-    doc: (path) => users[path]!,
-  );
-
-  //Declare the map of collections
-  final collections = {
-    usersCollectionReference.path: usersCollectionReference,
-  };
-
-  //Return the fake firestore
-  return FirebaseFirestoreFake(collection: (name) => collections[name]!);
-}
-
-///Act: This is the real code that you might find in your app
-Future<DocumentSnapshot<Map<String, dynamic>>> addAndFetchUser(
-  FirebaseFirestore firestore,
-  Map<String, dynamic> user,
-) async {
-  //Add user to users collection
-  final documentReference = await firestore.collection('users').add(user);
-
-  //Get document by Id
-  final fetchedDocumentReference =
-      firestore.collection('users').doc(documentReference.id);
-
-  //Return the document
-  return fetchedDocumentReference.get();
 }
