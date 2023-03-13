@@ -14,15 +14,40 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
   factory FirebaseFirestoreFake.stateful({
     Map<String, CollectionReferenceFake>? collections,
+    Query<Map<String, dynamic>> Function(
+      Object field, {
+      Object? arrayContains,
+      Iterable<Object?>? arrayContainsAny,
+      Object? isEqualTo,
+      Object? isGreaterThan,
+      Object? isGreaterThanOrEqualTo,
+      Object? isLessThan,
+      Object? isLessThanOrEqualTo,
+      Object? isNotEqualTo,
+      bool? isNull,
+      Iterable<Object?>? whereIn,
+      Iterable<Object?>? whereNotIn,
+    })?
+            Function(String path)?
+        whereForCollection,
   }) {
     collections ??= <String, CollectionReferenceFake>{};
 
     return FirebaseFirestoreFake(
-      collection: (p) {
+      collection: (collectionPath) {
         //TODO: what is the standard behaviour in firestore?
         //will it add the collection automatically?
-        collections!.putIfAbsent(p, () => CollectionReferenceFake.stateful(p));
-        return collections[p]!;
+        collections!.putIfAbsent(
+          collectionPath,
+          () => CollectionReferenceFake.stateful(
+            collectionPath,
+            where: whereForCollection != null
+                ? whereForCollection(collectionPath)
+                : null,
+          ),
+        );
+
+        return collections[collectionPath]!;
       },
     );
   }

@@ -35,7 +35,24 @@ class CollectionReferenceFake
         _add = add,
         _firestore = firestore ?? FirebaseFirestoreFake();
 
-  factory CollectionReferenceFake.stateful(String path) {
+  factory CollectionReferenceFake.stateful(
+    String path, {
+    Query<Map<String, dynamic>> Function(
+      Object field, {
+      Object? arrayContains,
+      Iterable<Object?>? arrayContainsAny,
+      Object? isEqualTo,
+      Object? isGreaterThan,
+      Object? isGreaterThanOrEqualTo,
+      Object? isLessThan,
+      Object? isLessThanOrEqualTo,
+      Object? isNotEqualTo,
+      bool? isNull,
+      Iterable<Object?>? whereIn,
+      Iterable<Object?>? whereNotIn,
+    })?
+        where,
+  }) {
     final documents = <String, DocumentReferenceFake>{};
     return CollectionReferenceFake(
       path,
@@ -46,6 +63,7 @@ class CollectionReferenceFake
         return documents[documentId] = documentReference;
       },
       doc: (id) => documents[id]!,
+      where: where,
     );
   }
 
