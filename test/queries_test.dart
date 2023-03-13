@@ -20,5 +20,18 @@ void main() {
       }) =>
           QueryFake(),
     );
+
+    final snapshots = firestore
+        .collection('books')
+        .where('category', isEqualTo: 'philosophy')
+        .snapshots();
+
+    final firstQuerySnapshotFuture = snapshots.first;
+
+    //TODO: Add to stream
+
+    final firstQuerySnapshot = await firstQuerySnapshotFuture;
+    expect(firstQuerySnapshot.docs.length, 1);
+    expect(firstQuerySnapshot.docs[0].data()['title'], 'Hi');
   });
 }
