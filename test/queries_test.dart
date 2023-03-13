@@ -24,13 +24,33 @@ void main() {
         whereIn,
         whereNotIn,
       }) =>
-          QueryFake(snapshots: snapshotsStreamController.stream),
+          QueryFake(
+            snapshots: snapshotsStreamController.stream,
+            whereClause: WhereClause(
+              field,
+              arrayContains: arrayContains,
+              arrayContainsAny: arrayContainsAny,
+              isEqualTo: isEqualTo,
+              isGreaterThan: isGreaterThan,
+              isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+              isLessThan: isLessThan,
+              isLessThanOrEqualTo: isLessThanOrEqualTo,
+              isNotEqualTo: isNotEqualTo,
+              isNull: isNull,
+              whereIn: whereIn,
+              whereNotIn: whereNotIn,
+            ),
+          ),
     );
 
-    final snapshots = firestore
+    final query = firestore
         .collection('books')
-        .where('category', isEqualTo: 'philosophy')
-        .snapshots();
+        .where('category', isEqualTo: 'philosophy') as QueryFake;
+
+    expect(query.whereClause!.field, 'category');
+    expect(query.whereClause!.isEqualTo, 'philosophy');
+
+    final snapshots = query.snapshots();
 
     final firstQuerySnapshotFuture = snapshots.first;
 
