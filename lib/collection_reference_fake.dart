@@ -14,21 +14,7 @@ class CollectionReferenceFake
     )?
         add,
     DocumentReference<Map<String, dynamic>> Function(String?)? doc,
-    Query<Map<String, dynamic>> Function(
-      Object field, {
-      Object? arrayContains,
-      Iterable<Object?>? arrayContainsAny,
-      Object? isEqualTo,
-      Object? isGreaterThan,
-      Object? isGreaterThanOrEqualTo,
-      Object? isLessThan,
-      Object? isLessThanOrEqualTo,
-      Object? isNotEqualTo,
-      bool? isNull,
-      Iterable<Object?>? whereIn,
-      Iterable<Object?>? whereNotIn,
-    })?
-        where,
+    Where where,
     FirebaseFirestore? firestore,
   })  : _where = where,
         _doc = doc,
@@ -37,21 +23,7 @@ class CollectionReferenceFake
 
   factory CollectionReferenceFake.stateful(
     String path, {
-    Query<Map<String, dynamic>> Function(
-      Object field, {
-      Object? arrayContains,
-      Iterable<Object?>? arrayContainsAny,
-      Object? isEqualTo,
-      Object? isGreaterThan,
-      Object? isGreaterThanOrEqualTo,
-      Object? isLessThan,
-      Object? isLessThanOrEqualTo,
-      Object? isNotEqualTo,
-      bool? isNull,
-      Iterable<Object?>? whereIn,
-      Iterable<Object?>? whereNotIn,
-    })?
-        where,
+    Where where,
   }) {
     final documents = <String, DocumentReferenceFake>{};
     return CollectionReferenceFake(
@@ -73,20 +45,7 @@ class CollectionReferenceFake
 
   final DocumentReference<Map<String, dynamic>> Function(String? path)? _doc;
 
-  final Query<Map<String, dynamic>> Function(
-    Object field, {
-    Object? isEqualTo,
-    Object? isNotEqualTo,
-    Object? isLessThan,
-    Object? isLessThanOrEqualTo,
-    Object? isGreaterThan,
-    Object? isGreaterThanOrEqualTo,
-    Object? arrayContains,
-    Iterable<Object?>? arrayContainsAny,
-    Iterable<Object?>? whereIn,
-    Iterable<Object?>? whereNotIn,
-    bool? isNull,
-  })? _where;
+  final Where _where;
 
   final String _path;
 

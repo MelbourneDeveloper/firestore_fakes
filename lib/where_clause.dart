@@ -1,3 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+typedef Where = Query<Map<String, dynamic>> Function(
+  Object field, {
+  Object? isEqualTo,
+  Object? isNotEqualTo,
+  Object? isLessThan,
+  Object? isLessThanOrEqualTo,
+  Object? isGreaterThan,
+  Object? isGreaterThanOrEqualTo,
+  Object? arrayContains,
+  Iterable<Object?>? arrayContainsAny,
+  Iterable<Object?>? whereIn,
+  Iterable<Object?>? whereNotIn,
+  bool? isNull,
+})?;
+
 class WhereClause {
   WhereClause(
     this.field, {

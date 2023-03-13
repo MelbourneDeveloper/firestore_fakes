@@ -58,7 +58,10 @@ void main() {
 
     snapshotsStreamController.add(
       QuerySnapshotFake([
-        QueryDocumentSnapshotFake({'title': 'Hi'})
+        QueryDocumentSnapshotFake({
+          'title': 'Hi',
+          'category': 'philosophy',
+        })
       ]),
     );
 

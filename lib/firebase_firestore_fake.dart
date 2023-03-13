@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firestore_fakes/collection_reference_fake.dart';
 import 'package:firestore_fakes/firebase_app_fake.dart';
 import 'package:firestore_fakes/settings_fake.dart';
+import 'package:firestore_fakes/where_clause.dart';
 
 class FirebaseFirestoreFake implements FirebaseFirestore {
   FirebaseFirestoreFake({
@@ -14,22 +15,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
   factory FirebaseFirestoreFake.stateful({
     Map<String, CollectionReferenceFake>? collections,
-    Query<Map<String, dynamic>> Function(
-      Object field, {
-      Object? arrayContains,
-      Iterable<Object?>? arrayContainsAny,
-      Object? isEqualTo,
-      Object? isGreaterThan,
-      Object? isGreaterThanOrEqualTo,
-      Object? isLessThan,
-      Object? isLessThanOrEqualTo,
-      Object? isNotEqualTo,
-      bool? isNull,
-      Iterable<Object?>? whereIn,
-      Iterable<Object?>? whereNotIn,
-    })?
-            Function(String path)?
-        whereForCollection,
+    Where Function(String path)? whereForCollection,
   }) {
     collections ??= <String, CollectionReferenceFake>{};
 
