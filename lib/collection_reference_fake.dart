@@ -24,6 +24,7 @@ class CollectionReferenceFake
   factory CollectionReferenceFake.stateful(
     String path, {
     Where where,
+    void Function()? onChanged,
   }) {
     final documents = <String, DocumentReferenceFake>{};
     return CollectionReferenceFake(
@@ -32,8 +33,11 @@ class CollectionReferenceFake
         final documentId = const Uuid().v4();
         final documentReference =
             DocumentReferenceFake.stateful(documentId, data);
+        onChanged?.call();
         return documents[documentId] = documentReference;
       },
+      //TODO: Call onChanged when a set or update comes from the 
+      //DocumentReferenceFake
       doc: (id) => documents[id]!,
       where: where,
     );

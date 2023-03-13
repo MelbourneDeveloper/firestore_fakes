@@ -16,6 +16,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
   factory FirebaseFirestoreFake.stateful({
     Map<String, CollectionReferenceFake>? collections,
     Where Function(String path)? whereForCollection,
+    void Function(String path)? collectionChanged,
   }) {
     collections ??= <String, CollectionReferenceFake>{};
 
@@ -27,6 +28,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
           collectionPath,
           () => CollectionReferenceFake.stateful(
             collectionPath,
+            onChanged: () => collectionChanged?.call(collectionPath),
             where: whereForCollection != null
                 ? whereForCollection(collectionPath)
                 : null,
