@@ -10,37 +10,39 @@ void main() {
         StreamController<QuerySnapshot<Map<String, dynamic>>>();
 
     final firestore = FirebaseFirestoreFake.stateful(
-      whereForCollection: (collectionPath) => (
-        field, {
-        arrayContains,
-        arrayContainsAny,
-        isEqualTo,
-        isGreaterThan,
-        isGreaterThanOrEqualTo,
-        isLessThan,
-        isLessThanOrEqualTo,
-        isNotEqualTo,
-        isNull,
-        whereIn,
-        whereNotIn,
-      }) =>
-          QueryFake(
-            snapshots: snapshotsStreamController.stream,
-            whereClause: WhereClause(
-              field,
-              arrayContains: arrayContains,
-              arrayContainsAny: arrayContainsAny,
-              isEqualTo: isEqualTo,
-              isGreaterThan: isGreaterThan,
-              isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
-              isLessThan: isLessThan,
-              isLessThanOrEqualTo: isLessThanOrEqualTo,
-              isNotEqualTo: isNotEqualTo,
-              isNull: isNull,
-              whereIn: whereIn,
-              whereNotIn: whereNotIn,
-            ),
-          ),
+      whereForCollection: (collectionPath) => collectionPath == 'books'
+          ? (
+              field, {
+              arrayContains,
+              arrayContainsAny,
+              isEqualTo,
+              isGreaterThan,
+              isGreaterThanOrEqualTo,
+              isLessThan,
+              isLessThanOrEqualTo,
+              isNotEqualTo,
+              isNull,
+              whereIn,
+              whereNotIn,
+            }) =>
+              QueryFake(
+                snapshots: snapshotsStreamController.stream,
+                whereClause: WhereClause(
+                  field,
+                  arrayContains: arrayContains,
+                  arrayContainsAny: arrayContainsAny,
+                  isEqualTo: isEqualTo,
+                  isGreaterThan: isGreaterThan,
+                  isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+                  isLessThan: isLessThan,
+                  isLessThanOrEqualTo: isLessThanOrEqualTo,
+                  isNotEqualTo: isNotEqualTo,
+                  isNull: isNull,
+                  whereIn: whereIn,
+                  whereNotIn: whereNotIn,
+                ),
+              )
+          : throw ArgumentError('Wrong collection path here'),
     );
 
     final query = firestore
