@@ -25,8 +25,15 @@ class CollectionReferenceFake
     String path, {
     Where where,
     void Function(Map<String, DocumentReferenceFake> documents)? onChanged,
+    Duration latency = const Duration(milliseconds: 100),
   }) {
     final documents = <String, DocumentReferenceFake>{};
+
+    Future<void>.delayed(
+      latency,
+      () => onChanged?.call(documents),
+    );
+
     return CollectionReferenceFake(
       path,
       //documents,
