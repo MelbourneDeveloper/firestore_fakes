@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_fakes/firestore_fakes.dart';
 import 'package:flutter/material.dart';
 
-final FirebaseFirestore firestore = FirebaseFirestoreFake.stateful();
-
 void main() {
-  runApp(const MyHomePage());
+  runApp(MyHomePage(firestore: FirebaseFirestoreFake.stateful()));
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({required this.firestore, super.key});
+
+  final FirebaseFirestore firestore;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -19,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) => MaterialApp(
         home: StreamBuilder(
-          stream: firestore
+          stream: widget.firestore
               .collection('books')
               .where('category', isEqualTo: 'philosophy')
               .snapshots(),
@@ -31,8 +31,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ? ListView(
                     children: snapshot.data!.docs
                         .map(
-                          (e) => ListTile(
-                            title: Text(e['title'] as String),
+                          (documentSnapshot) => ListTile(
+                            title: Text(documentSnapshot['title'] as String),
                           ),
                         )
                         .toList(),
@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 : const CircularProgressIndicator.adaptive(),
             floatingActionButton: FloatingActionButton(
               onPressed: () async =>
-                  firestore.collection('books').add(<String, dynamic>{
+                  widget.firestore.collection('books').add(<String, dynamic>{
                 'title': 'The Art of War',
                 'category': 'philosophy',
               }),
