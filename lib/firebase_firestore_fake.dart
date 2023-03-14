@@ -59,7 +59,8 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
                 }
                 queriesByCollection[collectionPath]!.add(
                   QueryFakeAndController(
-                    where(collectionPath) as QueryFake,
+                    //TODO: This should be a where clause
+                    where('PUT WHERE CLAUSE HERE') as QueryFake,
                     controller,
                   ),
                 );
