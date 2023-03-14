@@ -28,5 +28,17 @@ void main() {
         throwsA(isA<UnimplementedError>()),
       );
     });
+
+    test('Test onChanged gives the correct documents', () async {
+      late Map<String, DocumentReferenceFake> docs;
+      final fake = CollectionReferenceFake.stateful(
+        'books',
+        onChanged: (documents) => docs = documents,
+      );
+      await fake.add({'name': 'bob'});
+      final actual = (await docs.values.first.get()).data()!;
+      expect(docs.length, 1);
+      expect(actual['name'], 'bob');
+    });
   });
 }

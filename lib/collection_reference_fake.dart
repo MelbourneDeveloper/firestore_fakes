@@ -43,8 +43,10 @@ class CollectionReferenceFake
         final documentId = const Uuid().v4();
         final documentReference =
             DocumentReferenceFake.stateful(documentId, data);
+
+        documents[documentId] = documentReference;
         onChanged?.call(documents);
-        return documents[documentId] = documentReference;
+        return documentReference;
       },
       //TODO: Call onChanged when a set or update comes from the
       //DocumentReferenceFake
