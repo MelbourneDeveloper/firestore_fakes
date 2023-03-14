@@ -1,12 +1,18 @@
 // ignore_for_file:  always_put_required_named_parameters_first, strict_raw_type
 
+import 'dart:async';
 import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firestore_fakes/collection_reference_fake.dart';
-import 'package:firestore_fakes/firebase_app_fake.dart';
-import 'package:firestore_fakes/settings_fake.dart';
-import 'package:firestore_fakes/where_clause.dart';
+import 'package:firestore_fakes/firestore_fakes.dart';
+
+class QueryFakeAndController {
+  QueryFakeAndController(this.queryFake, this.controller);
+
+  final QueryFake queryFake;
+  final StreamController<QuerySnapshot<Map<String, dynamic>>> controller;
+}
 
 class FirebaseFirestoreFake implements FirebaseFirestore {
   FirebaseFirestoreFake({
@@ -15,8 +21,17 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
   factory FirebaseFirestoreFake.stateful({
     Map<String, CollectionReferenceFake>? collections,
-    Where Function(String path)? whereForCollection,
-    void Function(String path)? collectionChanged,
+    Where Function(
+      String path,
+      StreamController<QuerySnapshot<Map<String, dynamic>>> controller,
+    )?
+        whereForCollection,
+    void Function(
+      String path,
+      Map<String, DocumentReferenceFake> collectionDocuments,
+      List<QueryFakeAndController> queries,
+    )?
+        onCollectionChanged,
   }) {
     collections ??= <String, CollectionReferenceFake>{};
 
@@ -24,15 +39,47 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
       collection: (collectionPath) {
         //TODO: what is the standard behaviour in firestore?
         //will it add the collection automatically?
+
+        final queriesByCollection = <String, List<QueryFakeAndController>>{};
+
         collections!.putIfAbsent(
           collectionPath,
-          () => CollectionReferenceFake.stateful(
-            collectionPath,
-            onChanged: () => collectionChanged?.call(collectionPath),
-            where: whereForCollection != null
-                ? whereForCollection(collectionPath)
-                : null,
-          ),
+          () {
+            late final Where? where;
+
+            if (whereForCollection != null) {
+              // ignore: close_sinks
+              final controller = StreamController<
+                  QuerySnapshot<Map<String, dynamic>>>.broadcast();
+              where = whereForCollection(collectionPath, controller);
+
+              if (where != null) {
+                if (queriesByCollection[collectionPath] == null) {
+                  queriesByCollection[collectionPath] = [];
+                }
+                queriesByCollection[collectionPath]!.add(
+                  QueryFakeAndController(
+                    where(collectionPath) as QueryFake,
+                    controller,
+                  ),
+                );
+              }
+            } else {
+              where = null;
+            }
+
+            return CollectionReferenceFake.stateful(
+              collectionPath,
+              onChanged: (documents) {
+                onCollectionChanged?.call(
+                  collectionPath,
+                  documents,
+                  queriesByCollection[collectionPath] ?? [],
+                );
+              },
+              where: where,
+            );
+          },
         );
 
         return collections[collectionPath]!;

@@ -2,29 +2,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firestore_fakes/firestore_fakes.dart';
 import 'package:flutter/material.dart';
 
-final FirebaseFirestore firestore = FirebaseFirestoreFake.stateful();
-
-class Book {
-  Book(this.isbn, this.title, this.author, this.category);
-
-  factory Book.fromJson(Map<String, dynamic> json) => Book(
-        json['isbn'] as String,
-        json['title'] as String,
-        json['author'] as String,
-        json['category'] as String,
+final FirebaseFirestore firestore = FirebaseFirestoreFake.stateful(
+  onCollectionChanged: (path, collectionDocuments, queries) async {
+    for (final queryFakeAndController in queries) {
+      final futures = collectionDocuments.values.map((ref) => ref.get());
+      final documentSnapshots = (await Future.wait(futures))
+          .where(
+            (snapshot) =>
+                snapshot.data()![
+                    queryFakeAndController.queryFake.whereClause!.field] ==
+                queryFakeAndController.queryFake.whereClause!.isEqualTo,
+          )
+          .map((snapshot) => QueryDocumentSnapshotFake(snapshot.data()!))
+          .toList();
+      queryFakeAndController.controller.add(
+        QuerySnapshotFake(documentSnapshots),
       );
-  final String isbn;
-  final String title;
-  final String author;
-  final String category;
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'ISBN': isbn,
-        'title': title,
-        'author': author,
-        'category': category,
-      };
-}
+    }
+  },
+);
 
 void main() {
   runApp(const MyHomePage());

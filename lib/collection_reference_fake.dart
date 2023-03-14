@@ -24,19 +24,20 @@ class CollectionReferenceFake
   factory CollectionReferenceFake.stateful(
     String path, {
     Where where,
-    void Function()? onChanged,
+    void Function(Map<String, DocumentReferenceFake> documents)? onChanged,
   }) {
     final documents = <String, DocumentReferenceFake>{};
     return CollectionReferenceFake(
       path,
+      //documents,
       add: (data) async {
         final documentId = const Uuid().v4();
         final documentReference =
             DocumentReferenceFake.stateful(documentId, data);
-        onChanged?.call();
+        onChanged?.call(documents);
         return documents[documentId] = documentReference;
       },
-      //TODO: Call onChanged when a set or update comes from the 
+      //TODO: Call onChanged when a set or update comes from the
       //DocumentReferenceFake
       doc: (id) => documents[id]!,
       where: where,

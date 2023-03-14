@@ -10,39 +10,40 @@ void main() {
         StreamController<QuerySnapshot<Map<String, dynamic>>>();
 
     final firestore = FirebaseFirestoreFake.stateful(
-      whereForCollection: (collectionPath) => collectionPath == 'books'
-          ? (
-              field, {
-              arrayContains,
-              arrayContainsAny,
-              isEqualTo,
-              isGreaterThan,
-              isGreaterThanOrEqualTo,
-              isLessThan,
-              isLessThanOrEqualTo,
-              isNotEqualTo,
-              isNull,
-              whereIn,
-              whereNotIn,
-            }) =>
-              QueryFake(
-                snapshots: snapshotsStreamController.stream,
-                whereClause: WhereClause(
-                  field,
-                  arrayContains: arrayContains,
-                  arrayContainsAny: arrayContainsAny,
-                  isEqualTo: isEqualTo,
-                  isGreaterThan: isGreaterThan,
-                  isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
-                  isLessThan: isLessThan,
-                  isLessThanOrEqualTo: isLessThanOrEqualTo,
-                  isNotEqualTo: isNotEqualTo,
-                  isNull: isNull,
-                  whereIn: whereIn,
-                  whereNotIn: whereNotIn,
-                ),
-              )
-          : throw ArgumentError('Wrong collection path here'),
+      whereForCollection: (collectionPath, controller) =>
+          collectionPath == 'books'
+              ? (
+                  field, {
+                  arrayContains,
+                  arrayContainsAny,
+                  isEqualTo,
+                  isGreaterThan,
+                  isGreaterThanOrEqualTo,
+                  isLessThan,
+                  isLessThanOrEqualTo,
+                  isNotEqualTo,
+                  isNull,
+                  whereIn,
+                  whereNotIn,
+                }) =>
+                  QueryFake(
+                    snapshots: snapshotsStreamController.stream,
+                    whereClause: WhereClause(
+                      field,
+                      arrayContains: arrayContains,
+                      arrayContainsAny: arrayContainsAny,
+                      isEqualTo: isEqualTo,
+                      isGreaterThan: isGreaterThan,
+                      isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+                      isLessThan: isLessThan,
+                      isLessThanOrEqualTo: isLessThanOrEqualTo,
+                      isNotEqualTo: isNotEqualTo,
+                      isNull: isNull,
+                      whereIn: whereIn,
+                      whereNotIn: whereNotIn,
+                    ),
+                  )
+              : throw ArgumentError('Wrong collection path here'),
     );
 
     final query = firestore
@@ -77,7 +78,7 @@ void main() {
         StreamController<QuerySnapshot<Map<String, dynamic>>>();
 
     final firestore = FirebaseFirestoreFake.stateful(
-      collectionChanged: (path) => path == 'books'
+      onCollectionChanged: (path, documents, queries) => path == 'books'
           ? snapshotsStreamController.add(
               QuerySnapshotFake([
                 QueryDocumentSnapshotFake({
@@ -87,39 +88,40 @@ void main() {
               ]),
             )
           : throw UnimplementedError('Wrong collection'),
-      whereForCollection: (collectionPath) => collectionPath == 'books'
-          ? (
-              field, {
-              arrayContains,
-              arrayContainsAny,
-              isEqualTo,
-              isGreaterThan,
-              isGreaterThanOrEqualTo,
-              isLessThan,
-              isLessThanOrEqualTo,
-              isNotEqualTo,
-              isNull,
-              whereIn,
-              whereNotIn,
-            }) =>
-              QueryFake(
-                snapshots: snapshotsStreamController.stream,
-                whereClause: WhereClause(
-                  field,
-                  arrayContains: arrayContains,
-                  arrayContainsAny: arrayContainsAny,
-                  isEqualTo: isEqualTo,
-                  isGreaterThan: isGreaterThan,
-                  isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
-                  isLessThan: isLessThan,
-                  isLessThanOrEqualTo: isLessThanOrEqualTo,
-                  isNotEqualTo: isNotEqualTo,
-                  isNull: isNull,
-                  whereIn: whereIn,
-                  whereNotIn: whereNotIn,
-                ),
-              )
-          : throw ArgumentError('Wrong collection path here'),
+      whereForCollection: (collectionPath, controller) =>
+          collectionPath == 'books'
+              ? (
+                  field, {
+                  arrayContains,
+                  arrayContainsAny,
+                  isEqualTo,
+                  isGreaterThan,
+                  isGreaterThanOrEqualTo,
+                  isLessThan,
+                  isLessThanOrEqualTo,
+                  isNotEqualTo,
+                  isNull,
+                  whereIn,
+                  whereNotIn,
+                }) =>
+                  QueryFake(
+                    snapshots: snapshotsStreamController.stream,
+                    whereClause: WhereClause(
+                      field,
+                      arrayContains: arrayContains,
+                      arrayContainsAny: arrayContainsAny,
+                      isEqualTo: isEqualTo,
+                      isGreaterThan: isGreaterThan,
+                      isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+                      isLessThan: isLessThan,
+                      isLessThanOrEqualTo: isLessThanOrEqualTo,
+                      isNotEqualTo: isNotEqualTo,
+                      isNull: isNull,
+                      whereIn: whereIn,
+                      whereNotIn: whereNotIn,
+                    ),
+                  )
+              : throw ArgumentError('Wrong collection path here'),
     );
 
     final query = firestore
