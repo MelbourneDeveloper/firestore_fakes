@@ -4,7 +4,7 @@ This library gives you a set of fakes that allow you fake Firebase Firestore. It
 
 ## Stateful vs. Stateless
 
-You configure the classes with function composition by passing values into their constructors. You can manage the state (or use no state) external to the classes, or you can allow the classes to automatically manage the state internally. When the fakes manage the state internally, they aim to mimic the functionality of Firestore. It is impossible to write an entire app that stores data in memory and behaves like the real Firestore database.
+You configure the classes with function composition by passing values into their constructors. You can manage the state (or use no state) external to the classes, or you can allow the classes to automatically manage the state internally. When the fakes manage the state internally, they aim to mimic the functionality of Firestore. It is possible to write an entire app that stores data in memory and behaves like the real Firestore database.
 
 This is a stateful example that mimics streaming. You can use this as your Flutter state management solution. Check out the example tab for a Flutter example that updates the state using `StreamBuilder`.
 
