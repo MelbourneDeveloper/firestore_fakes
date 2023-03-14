@@ -21,11 +21,6 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
   factory FirebaseFirestoreFake.stateful({
     Map<String, CollectionReferenceFake>? collections,
-    Where Function(
-      String path,
-      StreamController<QuerySnapshot<Map<String, dynamic>>> controller,
-    )?
-        whereForCollection,
     void Function(
       String path,
       Map<String, DocumentReferenceFake> collectionDocuments,
@@ -44,43 +39,64 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
         collections!.putIfAbsent(
           collectionPath,
-          () {
-            late final Where? where;
-
-            if (whereForCollection != null) {
+          () => CollectionReferenceFake.stateful(
+            collectionPath,
+            onChanged: (documents) {
+              onCollectionChanged?.call(
+                collectionPath,
+                documents,
+                queriesByCollection[collectionPath] ?? [],
+              );
+            },
+            where: (
+              field, {
+              isEqualTo,
+              isNotEqualTo,
+              isLessThan,
+              isLessThanOrEqualTo,
+              isGreaterThan,
+              isGreaterThanOrEqualTo,
+              arrayContains,
+              arrayContainsAny,
+              whereIn,
+              whereNotIn,
+              isNull,
+            }) {
               // ignore: close_sinks
               final controller = StreamController<
                   QuerySnapshot<Map<String, dynamic>>>.broadcast();
-              where = whereForCollection(collectionPath, controller);
 
-              if (where != null) {
-                if (queriesByCollection[collectionPath] == null) {
-                  queriesByCollection[collectionPath] = [];
-                }
-                queriesByCollection[collectionPath]!.add(
-                  QueryFakeAndController(
-                    //TODO: This should be a where clause
-                    where('PUT WHERE CLAUSE HERE') as QueryFake,
-                    controller,
-                  ),
-                );
+              final queryFake = QueryFake(
+                snapshots: controller.stream,
+                whereClause: WhereClause(
+                  field,
+                  isEqualTo: isEqualTo,
+                  isNotEqualTo: isNotEqualTo,
+                  isLessThan: isLessThan,
+                  isLessThanOrEqualTo: isLessThanOrEqualTo,
+                  isGreaterThan: isGreaterThan,
+                  isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+                  arrayContains: arrayContains,
+                  arrayContainsAny: arrayContainsAny,
+                  whereIn: whereIn,
+                  whereNotIn: whereNotIn,
+                  isNull: isNull,
+                ),
+              );
+
+              if (queriesByCollection[collectionPath] == null) {
+                queriesByCollection[collectionPath] = [];
               }
-            } else {
-              where = null;
-            }
+              queriesByCollection[collectionPath]!.add(
+                QueryFakeAndController(
+                  queryFake,
+                  controller,
+                ),
+              );
 
-            return CollectionReferenceFake.stateful(
-              collectionPath,
-              onChanged: (documents) {
-                onCollectionChanged?.call(
-                  collectionPath,
-                  documents,
-                  queriesByCollection[collectionPath] ?? [],
-                );
-              },
-              where: where,
-            );
-          },
+              return queryFake;
+            },
+          ),
         );
 
         return collections[collectionPath]!;

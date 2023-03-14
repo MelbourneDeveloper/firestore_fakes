@@ -30,42 +30,6 @@ final FirebaseFirestore firestore = FirebaseFirestoreFake.stateful(
       );
     }
   },
-  whereForCollection: (collectionPath, controller) => (
-    field, {
-    arrayContains,
-    arrayContainsAny,
-    isEqualTo,
-    isGreaterThan,
-    isGreaterThanOrEqualTo,
-    isLessThan,
-    isLessThanOrEqualTo,
-    isNotEqualTo,
-    isNull,
-    whereIn,
-    whereNotIn,
-  }) {
-    if (collectionPath == 'books') {
-      return QueryFake(
-        snapshots: controller.stream,
-        whereClause: WhereClause(
-          field,
-          arrayContains: arrayContains,
-          arrayContainsAny: arrayContainsAny,
-          isEqualTo: isEqualTo,
-          isGreaterThan: isGreaterThan,
-          isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
-          isLessThan: isLessThan,
-          isLessThanOrEqualTo: isLessThanOrEqualTo,
-          isNotEqualTo: isNotEqualTo,
-          isNull: isNull,
-          whereIn: whereIn,
-          whereNotIn: whereNotIn,
-        ),
-      );
-    }
-
-    throw ArgumentError('Wrong collection path here');
-  },
 );
 
 void main() {
