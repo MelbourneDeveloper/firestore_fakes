@@ -39,15 +39,18 @@ class CollectionReferenceFake
     return CollectionReferenceFake(
       path,
       //documents,
-      add: (data) async {
-        final documentId = const Uuid().v4();
-        final documentReference =
-            DocumentReferenceFake.stateful(documentId, data);
+      add: (data) async => Future<DocumentReferenceFake>.delayed(
+        latency,
+        () {
+          final documentId = const Uuid().v4();
+          final documentReference =
+              DocumentReferenceFake.stateful(documentId, data);
 
-        documents[documentId] = documentReference;
-        onChanged?.call(documents);
-        return documentReference;
-      },
+          documents[documentId] = documentReference;
+          onChanged?.call(documents);
+          return documentReference;
+        },
+      ),
       //TODO: Call onChanged when a set or update comes from the
       //DocumentReferenceFake
       doc: (id) => documents[id]!,
