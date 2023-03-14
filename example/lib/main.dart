@@ -20,6 +20,39 @@ final FirebaseFirestore firestore = FirebaseFirestoreFake.stateful(
       );
     }
   },
+  whereForCollection: (collectionPath, controller) => collectionPath == 'books'
+      ? (
+          field, {
+          arrayContains,
+          arrayContainsAny,
+          isEqualTo,
+          isGreaterThan,
+          isGreaterThanOrEqualTo,
+          isLessThan,
+          isLessThanOrEqualTo,
+          isNotEqualTo,
+          isNull,
+          whereIn,
+          whereNotIn,
+        }) =>
+          QueryFake(
+            snapshots: controller.stream,
+            whereClause: WhereClause(
+              field,
+              arrayContains: arrayContains,
+              arrayContainsAny: arrayContainsAny,
+              isEqualTo: isEqualTo,
+              isGreaterThan: isGreaterThan,
+              isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+              isLessThan: isLessThan,
+              isLessThanOrEqualTo: isLessThanOrEqualTo,
+              isNotEqualTo: isNotEqualTo,
+              isNull: isNull,
+              whereIn: whereIn,
+              whereNotIn: whereNotIn,
+            ),
+          )
+      : throw ArgumentError('Wrong collection path here'),
 );
 
 void main() {
@@ -35,34 +68,36 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
-  Widget build(BuildContext context) => StreamBuilder(
-        stream: firestore
-            .collection('books')
-            .where('category', isEqualTo: 'philosophy')
-            .snapshots(),
-        builder: (context, snapshot) => Scaffold(
-          appBar: AppBar(
-            title: const Text('Books'),
-          ),
-          body: snapshot.connectionState == ConnectionState.done
-              ? ListView(
-                  children: snapshot.data!.docs
-                      .map(
-                        (e) => ListTile(
-                          title: Text(e['title'] as String),
-                        ),
-                      )
-                      .toList(),
-                )
-              : const CircularProgressIndicator.adaptive(),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async =>
-                firestore.collection('books').add(<String, dynamic>{
-              'title': 'The Art of War',
-              'category': 'philosophy',
-            }),
-            tooltip: 'Increment',
-            child: const Icon(Icons.add),
+  Widget build(BuildContext context) => MaterialApp(
+        home: StreamBuilder(
+          stream: firestore
+              .collection('books')
+              .where('category', isEqualTo: 'philosophy')
+              .snapshots(),
+          builder: (context, snapshot) => Scaffold(
+            appBar: AppBar(
+              title: const Text('Books'),
+            ),
+            body: snapshot.connectionState == ConnectionState.done
+                ? ListView(
+                    children: snapshot.data!.docs
+                        .map(
+                          (e) => ListTile(
+                            title: Text(e['title'] as String),
+                          ),
+                        )
+                        .toList(),
+                  )
+                : const CircularProgressIndicator.adaptive(),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async =>
+                  firestore.collection('books').add(<String, dynamic>{
+                'title': 'The Art of War',
+                'category': 'philosophy',
+              }),
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            ),
           ),
         ),
       );
