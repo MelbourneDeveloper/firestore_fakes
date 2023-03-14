@@ -8,10 +8,7 @@ class QueryDocumentSnapshotFake
   final DocumentReference<Map<String, dynamic>>? _reference;
 
   @override
-  dynamic operator [](Object field) {
-    // TODO: implement []
-    throw UnimplementedError();
-  }
+  dynamic operator [](Object field) => _data[field];
 
   @override
   Map<String, dynamic> data() => _data;

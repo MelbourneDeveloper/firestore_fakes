@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
             appBar: AppBar(
               title: const Text('Books'),
             ),
-            body: snapshot.connectionState == ConnectionState.done
+            body: snapshot.data != null
                 ? ListView(
                     children: snapshot.data!.docs
                         .map(
