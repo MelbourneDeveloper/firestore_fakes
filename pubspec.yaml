@@ -1,6 +1,6 @@
 name: firestore_fakes
 description: A Firestore fake library that gives you control over the data
-version: 0.0.1-alpha
+version: 1.0.1-alpha
 repository: https://github.com/MelbourneDeveloper/firestore_fakes
 
 environment:

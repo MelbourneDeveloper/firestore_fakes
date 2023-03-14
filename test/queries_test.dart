@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Test Streaming Queries', () async {
+
+    //This mimics Firestore
     final firestore = FirebaseFirestoreFake.stateful();
 
     final query = firestore
