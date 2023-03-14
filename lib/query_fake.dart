@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firestore_fakes/firestore_fakes.dart';
 
 class QueryFake implements Query<Map<String, dynamic>> {
   QueryFake({
     Future<QuerySnapshot<Map<String, dynamic>>> Function()? get,
     Stream<QuerySnapshot<Map<String, dynamic>>>? snapshots,
+    this.whereClause,
   })  : _snapshots = snapshots,
         _get = get;
 
   final Future<QuerySnapshot<Map<String, dynamic>>> Function()? _get;
   final Stream<QuerySnapshot<Map<String, dynamic>>>? _snapshots;
+  final WhereClause? whereClause;
 
   @override
   AggregateQuery count() {

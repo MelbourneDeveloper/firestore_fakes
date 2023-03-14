@@ -1,11 +1,18 @@
 // ignore_for_file:  always_put_required_named_parameters_first, strict_raw_type
 
+import 'dart:async';
 import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firestore_fakes/collection_reference_fake.dart';
-import 'package:firestore_fakes/firebase_app_fake.dart';
-import 'package:firestore_fakes/settings_fake.dart';
+import 'package:firestore_fakes/firestore_fakes.dart';
+
+class QueryFakeAndController {
+  QueryFakeAndController(this.queryFake, this.controller);
+
+  final QueryFake queryFake;
+  final StreamController<QuerySnapshot<Map<String, dynamic>>> controller;
+}
 
 class FirebaseFirestoreFake implements FirebaseFirestore {
   FirebaseFirestoreFake({
@@ -14,13 +21,114 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
 
   factory FirebaseFirestoreFake.stateful({
     Map<String, CollectionReferenceFake>? collections,
+    void Function(
+      String path,
+      Map<String, DocumentReferenceFake> collectionDocuments,
+      List<QueryFakeAndController> queries,
+    )?
+        onCollectionChanged,
   }) {
     collections ??= <String, CollectionReferenceFake>{};
 
+    onCollectionChanged ??= (path, collectionDocuments, queries) async {
+      for (final queryFakeAndController in queries) {
+        final futures = collectionDocuments.values.map((ref) => ref.get());
+        final documentSnapshots = (await Future.wait(futures))
+            .where(
+              (snapshot) {
+                final whereClause =
+                    queryFakeAndController.queryFake.whereClause;
+                if (whereClause == null) {
+                  return true;
+                }
+                if (whereClause.isEqualTo != null) {
+                  return snapshot.data()![whereClause.field] ==
+                      whereClause.isEqualTo;
+                } else {
+                  throw UnimplementedError('Where clauses of this type '
+                      'have not been implemented. Please log a GitHub '
+                      'issue and  hopefully contribute with a PR');
+                }
+              },
+            )
+            .map((snapshot) => QueryDocumentSnapshotFake(snapshot.data()!))
+            .toList();
+        queryFakeAndController.controller.add(
+          QuerySnapshotFake(documentSnapshots),
+        );
+      }
+    };
+
     return FirebaseFirestoreFake(
-      collection: (p) {
-        collections!.putIfAbsent(p, () => CollectionReferenceFake.stateful(p));
-        return collections[p]!;
+      collection: (collectionPath) {
+        //TODO: what is the standard behaviour in firestore?
+        //will it add the collection automatically?
+
+        final queriesByCollection = <String, List<QueryFakeAndController>>{};
+
+        collections!.putIfAbsent(
+          collectionPath,
+          () => CollectionReferenceFake.stateful(
+            collectionPath,
+            onChanged: (documents) {
+              onCollectionChanged?.call(
+                collectionPath,
+                documents,
+                queriesByCollection[collectionPath] ?? [],
+              );
+            },
+            where: (
+              field, {
+              isEqualTo,
+              isNotEqualTo,
+              isLessThan,
+              isLessThanOrEqualTo,
+              isGreaterThan,
+              isGreaterThanOrEqualTo,
+              arrayContains,
+              arrayContainsAny,
+              whereIn,
+              whereNotIn,
+              isNull,
+            }) {
+              // ignore: close_sinks
+              final controller = StreamController<
+                  QuerySnapshot<Map<String, dynamic>>>.broadcast();
+
+              final queryFake = QueryFake(
+                snapshots: controller.stream,
+                whereClause: WhereClause(
+                  field,
+                  isEqualTo: isEqualTo,
+                  isNotEqualTo: isNotEqualTo,
+                  isLessThan: isLessThan,
+                  isLessThanOrEqualTo: isLessThanOrEqualTo,
+                  isGreaterThan: isGreaterThan,
+                  isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+                  arrayContains: arrayContains,
+                  arrayContainsAny: arrayContainsAny,
+                  whereIn: whereIn,
+                  whereNotIn: whereNotIn,
+                  isNull: isNull,
+                ),
+              );
+
+              if (queriesByCollection[collectionPath] == null) {
+                queriesByCollection[collectionPath] = [];
+              }
+              queriesByCollection[collectionPath]!.add(
+                QueryFakeAndController(
+                  queryFake,
+                  controller,
+                ),
+              );
+
+              return queryFake;
+            },
+          ),
+        );
+
+        return collections[collectionPath]!;
       },
     );
   }

@@ -14,38 +14,47 @@ class CollectionReferenceFake
     )?
         add,
     DocumentReference<Map<String, dynamic>> Function(String?)? doc,
-    Query<Map<String, dynamic>> Function(
-      Object field, {
-      Object? arrayContains,
-      Iterable<Object?>? arrayContainsAny,
-      Object? isEqualTo,
-      Object? isGreaterThan,
-      Object? isGreaterThanOrEqualTo,
-      Object? isLessThan,
-      Object? isLessThanOrEqualTo,
-      Object? isNotEqualTo,
-      bool? isNull,
-      Iterable<Object?>? whereIn,
-      Iterable<Object?>? whereNotIn,
-    })?
-        where,
+    Where where,
     FirebaseFirestore? firestore,
   })  : _where = where,
         _doc = doc,
         _add = add,
         _firestore = firestore ?? FirebaseFirestoreFake();
 
-  factory CollectionReferenceFake.stateful(String path) {
+  factory CollectionReferenceFake.stateful(
+    String path, {
+    Where where,
+    void Function(Map<String, DocumentReferenceFake> documents)? onChanged,
+    Duration latency = const Duration(milliseconds: 100),
+  }) {
     final documents = <String, DocumentReferenceFake>{};
+
+    //Fires the first onChanged on the collection so we can get first on the
+    //stream
+    Future<void>.delayed(
+      latency,
+      () => onChanged?.call(documents),
+    );
+
     return CollectionReferenceFake(
       path,
-      add: (data) async {
-        final documentId = const Uuid().v4();
-        final documentReference =
-            DocumentReferenceFake.stateful(documentId, data);
-        return documents[documentId] = documentReference;
-      },
+      //documents,
+      add: (data) async => Future<DocumentReferenceFake>.delayed(
+        latency,
+        () {
+          final documentId = const Uuid().v4();
+          final documentReference =
+              DocumentReferenceFake.stateful(documentId, data);
+
+          documents[documentId] = documentReference;
+          onChanged?.call(documents);
+          return documentReference;
+        },
+      ),
+      //TODO: Call onChanged when a set or update comes from the
+      //DocumentReferenceFake
       doc: (id) => documents[id]!,
+      where: where,
     );
   }
 
@@ -55,20 +64,7 @@ class CollectionReferenceFake
 
   final DocumentReference<Map<String, dynamic>> Function(String? path)? _doc;
 
-  final Query<Map<String, dynamic>> Function(
-    Object field, {
-    Object? isEqualTo,
-    Object? isNotEqualTo,
-    Object? isLessThan,
-    Object? isLessThanOrEqualTo,
-    Object? isGreaterThan,
-    Object? isGreaterThanOrEqualTo,
-    Object? arrayContains,
-    Iterable<Object?>? arrayContainsAny,
-    Iterable<Object?>? whereIn,
-    Iterable<Object?>? whereNotIn,
-    bool? isNull,
-  })? _where;
+  final Where _where;
 
   final String _path;
 

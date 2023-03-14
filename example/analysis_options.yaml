@@ -1,0 +1,7 @@
+
+include: package:austerity/analysis_options.yaml
+
+linter:
+
+  rules:
+

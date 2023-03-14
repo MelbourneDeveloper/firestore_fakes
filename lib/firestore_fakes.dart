@@ -9,3 +9,4 @@ export 'query_document_snapshot_fake.dart';
 export 'query_fake.dart';
 export 'query_snapshot_fake.dart';
 export 'settings_fake.dart';
+export 'where_clause.dart';
