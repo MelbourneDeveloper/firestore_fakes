@@ -6,25 +6,31 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firestore_fakes/firestore_fakes.dart';
+import 'package:firestore_fakes/query_fake_and_stream_controller.dart';
 
-class QueryFakeAndController {
-  QueryFakeAndController(this.queryFake, this.controller);
-
-  final QueryFake queryFake;
-  final StreamController<QuerySnapshot<Map<String, dynamic>>> controller;
-}
-
+///An empty shell of a [FirebaseFirestore] that can be used for testing or 
+///creating an app that does not require a real connection to Firestore
+///
+///The Stateful version of this class maintains its own state and aims to mimic 
+///Firestore, while the Stateless version allows you to compose the 
+///functionality and store the state outside of the class. 
+///
+///You can use this as a mock or a fake. If you want to use this as a mock,
+///avoid the Stateful constructors, and return the expected values by 
+///passing them through the constructor
 class FirebaseFirestoreFake implements FirebaseFirestore {
   FirebaseFirestoreFake({
     CollectionReference<Map<String, dynamic>> Function(String name)? collection,
   }) : _collection = collection;
 
+  ///Creates a stateful FirebaseFirestore fake that maintains its own state and
+  ///aims to mimic firebase as closely as possible
   factory FirebaseFirestoreFake.stateful({
     Map<String, CollectionReferenceFake>? collections,
     void Function(
       String path,
       Map<String, DocumentReferenceFake> collectionDocuments,
-      List<QueryFakeAndController> queries,
+      List<QueryFakeAndStreamController> queries,
     )?
         onCollectionChanged,
   }) {
@@ -64,7 +70,8 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
         //TODO: what is the standard behaviour in firestore?
         //will it add the collection automatically?
 
-        final queriesByCollection = <String, List<QueryFakeAndController>>{};
+        final queriesByCollection =
+            <String, List<QueryFakeAndStreamController>>{};
 
         collections!.putIfAbsent(
           collectionPath,
@@ -117,7 +124,7 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
                 queriesByCollection[collectionPath] = [];
               }
               queriesByCollection[collectionPath]!.add(
-                QueryFakeAndController(
+                QueryFakeAndStreamController(
                   queryFake,
                   controller,
                 ),
