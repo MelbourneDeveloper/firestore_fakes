@@ -29,6 +29,8 @@ class CollectionReferenceFake
   }) {
     final documents = <String, DocumentReferenceFake>{};
 
+    //Fires the first onChanged on the collection so we can get first on the
+    //stream
     Future<void>.delayed(
       latency,
       () => onChanged?.call(documents),
