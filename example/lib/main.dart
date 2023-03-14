@@ -8,10 +8,20 @@ final FirebaseFirestore firestore = FirebaseFirestoreFake.stateful(
       final futures = collectionDocuments.values.map((ref) => ref.get());
       final documentSnapshots = (await Future.wait(futures))
           .where(
-            (snapshot) =>
-                snapshot.data()![
-                    queryFakeAndController.queryFake.whereClause!.field] ==
-                queryFakeAndController.queryFake.whereClause!.isEqualTo,
+            (snapshot) {
+              final whereClause = queryFakeAndController.queryFake.whereClause;
+              if (whereClause == null) {
+                return true;
+              }
+              if (whereClause.isEqualTo != null) {
+                return snapshot.data()![whereClause.field] ==
+                    whereClause.isEqualTo;
+              } else {
+                throw UnimplementedError('Where clauses of this type '
+                    'have not been implemented. Please log a GitHub issue and '
+                    ' hopefully contribute with a PR');
+              }
+            },
           )
           .map((snapshot) => QueryDocumentSnapshotFake(snapshot.data()!))
           .toList();
@@ -20,39 +30,42 @@ final FirebaseFirestore firestore = FirebaseFirestoreFake.stateful(
       );
     }
   },
-  whereForCollection: (collectionPath, controller) => collectionPath == 'books'
-      ? (
-          field, {
-          arrayContains,
-          arrayContainsAny,
-          isEqualTo,
-          isGreaterThan,
-          isGreaterThanOrEqualTo,
-          isLessThan,
-          isLessThanOrEqualTo,
-          isNotEqualTo,
-          isNull,
-          whereIn,
-          whereNotIn,
-        }) =>
-          QueryFake(
-            snapshots: controller.stream,
-            whereClause: WhereClause(
-              field,
-              arrayContains: arrayContains,
-              arrayContainsAny: arrayContainsAny,
-              isEqualTo: isEqualTo,
-              isGreaterThan: isGreaterThan,
-              isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
-              isLessThan: isLessThan,
-              isLessThanOrEqualTo: isLessThanOrEqualTo,
-              isNotEqualTo: isNotEqualTo,
-              isNull: isNull,
-              whereIn: whereIn,
-              whereNotIn: whereNotIn,
-            ),
-          )
-      : throw ArgumentError('Wrong collection path here'),
+  whereForCollection: (collectionPath, controller) => (
+    field, {
+    arrayContains,
+    arrayContainsAny,
+    isEqualTo,
+    isGreaterThan,
+    isGreaterThanOrEqualTo,
+    isLessThan,
+    isLessThanOrEqualTo,
+    isNotEqualTo,
+    isNull,
+    whereIn,
+    whereNotIn,
+  }) {
+    if (collectionPath == 'books') {
+      return QueryFake(
+        snapshots: controller.stream,
+        whereClause: WhereClause(
+          field,
+          arrayContains: arrayContains,
+          arrayContainsAny: arrayContainsAny,
+          isEqualTo: isEqualTo,
+          isGreaterThan: isGreaterThan,
+          isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+          isLessThan: isLessThan,
+          isLessThanOrEqualTo: isLessThanOrEqualTo,
+          isNotEqualTo: isNotEqualTo,
+          isNull: isNull,
+          whereIn: whereIn,
+          whereNotIn: whereNotIn,
+        ),
+      );
+    }
+
+    throw ArgumentError('Wrong collection path here');
+  },
 );
 
 void main() {

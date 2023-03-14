@@ -26,23 +26,25 @@ void main() {
                   whereIn,
                   whereNotIn,
                 }) =>
-                  QueryFake(
-                    snapshots: snapshotsStreamController.stream,
-                    whereClause: WhereClause(
-                      field,
-                      arrayContains: arrayContains,
-                      arrayContainsAny: arrayContainsAny,
-                      isEqualTo: isEqualTo,
-                      isGreaterThan: isGreaterThan,
-                      isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
-                      isLessThan: isLessThan,
-                      isLessThanOrEqualTo: isLessThanOrEqualTo,
-                      isNotEqualTo: isNotEqualTo,
-                      isNull: isNull,
-                      whereIn: whereIn,
-                      whereNotIn: whereNotIn,
-                    ),
-                  )
+                  field == 'category'
+                      ? QueryFake(
+                          snapshots: snapshotsStreamController.stream,
+                          whereClause: WhereClause(
+                            field,
+                            arrayContains: arrayContains,
+                            arrayContainsAny: arrayContainsAny,
+                            isEqualTo: isEqualTo,
+                            isGreaterThan: isGreaterThan,
+                            isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+                            isLessThan: isLessThan,
+                            isLessThanOrEqualTo: isLessThanOrEqualTo,
+                            isNotEqualTo: isNotEqualTo,
+                            isNull: isNull,
+                            whereIn: whereIn,
+                            whereNotIn: whereNotIn,
+                          ),
+                        )
+                      : throw ArgumentError('Wrong field here')
               : throw ArgumentError('Wrong collection path here'),
     );
 
