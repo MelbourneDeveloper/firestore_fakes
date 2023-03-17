@@ -1,4 +1,4 @@
-# firebase_fakes
+# firestore_fakes
 
 This library gives you a set of fakes that allow you fake Firebase Firestore. It is similar to [fake_cloud_firestore](https://pub.dev/packages/fake_cloud_firestore) in that you can fake Firestore. However, this library gives you more control. You can add code to capture the events where documents are added to a collection, and you can capture the events where there is a fetch request. You can return whatever you want, or let the fakes automatically manage the state for you. 
 
