@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+///Documented
 class QueryDocumentSnapshotFake
     implements QueryDocumentSnapshot<Map<String, dynamic>> {
   QueryDocumentSnapshotFake(this._data, [this._reference]);

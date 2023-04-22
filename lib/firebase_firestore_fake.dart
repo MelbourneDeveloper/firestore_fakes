@@ -8,15 +8,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firestore_fakes/firestore_fakes.dart';
 import 'package:firestore_fakes/query_fake_and_stream_controller.dart';
 
-///An empty shell of a [FirebaseFirestore] that can be used for testing or 
+///An empty shell of a [FirebaseFirestore] that can be used for testing or
 ///creating an app that does not require a real connection to Firestore
 ///
-///The Stateful version of this class maintains its own state and aims to mimic 
-///Firestore, while the Stateless version allows you to compose the 
-///functionality and store the state outside of the class. 
+///The Stateful version of this class maintains its own state and aims to mimic
+///Firestore, while the Stateless version allows you to compose the
+///functionality and store the state outside of the class.
 ///
 ///You can use this as a mock or a fake. If you want to use this as a mock,
-///avoid the Stateful constructors, and return the expected values by 
+///avoid the Stateful constructors, and return the expected values by
 ///passing them through the constructor
 class FirebaseFirestoreFake implements FirebaseFirestore {
   FirebaseFirestoreFake({
@@ -50,6 +50,11 @@ class FirebaseFirestoreFake implements FirebaseFirestore {
                 if (whereClause.isEqualTo != null) {
                   return snapshot.data()![whereClause.field] ==
                       whereClause.isEqualTo;
+                } else if (whereClause.isNull != null) {
+                  return whereClause.isNull! &&
+                          snapshot.data()![whereClause.field] == null ||
+                      !whereClause.isNull! &&
+                          snapshot.data()![whereClause.field] != null;
                 } else {
                   throw UnimplementedError('Where clauses of this type '
                       'have not been implemented. Please log a GitHub '

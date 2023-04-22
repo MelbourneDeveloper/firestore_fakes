@@ -13,7 +13,7 @@ class CollectionReferenceFake
       Map<String, dynamic>,
     )?
         add,
-    DocumentReference<Map<String, dynamic>> Function(String?)? doc,
+    DocumentReference<Map<String, dynamic>> Function(String? id)? doc,
     Where where,
     FirebaseFirestore? firestore,
   })  : _where = where,
@@ -43,8 +43,11 @@ class CollectionReferenceFake
         latency,
         () {
           final documentId = const Uuid().v4();
-          final documentReference =
-              DocumentReferenceFake.stateful(documentId, data);
+          final documentReference = DocumentReferenceFake.stateful(
+            documentId,
+            data,
+            () => onChanged?.call(documents),
+          );
 
           documents[documentId] = documentReference;
           onChanged?.call(documents);
@@ -53,7 +56,19 @@ class CollectionReferenceFake
       ),
       //TODO: Call onChanged when a set or update comes from the
       //DocumentReferenceFake
-      doc: (id) => documents[id]!,
+      doc: (id) {
+        if (!documents.containsKey(id)) {
+          documents.addAll(<String, DocumentReferenceFake>{
+            id!: DocumentReferenceFake.stateful(
+              id,
+              {},
+              () => onChanged?.call(documents),
+            )
+          });
+          onChanged?.call(documents);
+        }
+        return documents[id]!;
+      },
       where: where,
     );
   }

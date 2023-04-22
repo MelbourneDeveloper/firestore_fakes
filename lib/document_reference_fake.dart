@@ -19,6 +19,7 @@ class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
   factory DocumentReferenceFake.stateful(
     String id,
     Map<String, dynamic> documentSnapshotData,
+    void Function() onChanged,
   ) =>
       DocumentReferenceFake(
         id,
@@ -27,11 +28,13 @@ class DocumentReferenceFake implements DocumentReference<Map<String, dynamic>> {
           for (final entry in data.entries) {
             documentSnapshotData[entry.key as String] = entry.value;
           }
+          onChanged();
         },
         set: (data) async {
           for (final entry in data.entries) {
             documentSnapshotData[entry.key] = entry.value;
           }
+          onChanged();
         },
       );
 

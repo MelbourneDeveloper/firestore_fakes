@@ -156,7 +156,7 @@ void main() {
     const documentId = '123';
 
     final documentReferenceFake =
-        DocumentReferenceFake.stateful(documentId, {'born': 1800});
+        DocumentReferenceFake.stateful(documentId, {'born': 1800}, () {});
 
     final firestore = FirebaseFirestoreFake(
       collection: (name) => CollectionReferenceFake(
