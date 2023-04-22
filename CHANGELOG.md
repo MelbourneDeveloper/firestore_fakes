@@ -5,4 +5,4 @@
 * Completely refactor
 * Add example and start building documentation
 ## 1.0.2-alpha
-* Fix a few bugs around 
+* Fix a few bugs around updates and where clauses (more reactive)
